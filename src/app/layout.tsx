@@ -1,4 +1,3 @@
-import { ReduxProvider } from "@/store/provider";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import ProvideChakra from "@/chakraprovider";
@@ -17,15 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ReduxProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <ProvideChakra>
-            <Navbar />
-            {children}
-          </ProvideChakra>
-        </body>
-      </html>
-    </ReduxProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <ProvideChakra>
+          <Navbar />
+          {children}
+        </ProvideChakra>
+      </body>
+    </html>
   );
 }
