@@ -31,9 +31,9 @@ export default function Hero() {
           </Text>
         </Heading>
         <Text color={"gray.500"} maxW={"3xl"}>
-          Never miss a meeting. Never be late for one too. Keep track of your
-          meetings and receive smart reminders in appropriate times. Read your
-          smart “Daily Agenda” every morning.
+          Guard against SQL injection. Get recommendations for query
+          optimization. Observe your frequently queried tables, columns, and
+          databases to make better architectural decisions.
         </Text>
         <Stack spacing={6} direction={"row"}>
           <Button
