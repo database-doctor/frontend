@@ -1,6 +1,7 @@
 import { ReduxProvider } from "@/store/provider";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import ProvideChakra from "@/chakraprovider";
 import Navbar from "../components/navigation/navbar/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +20,10 @@ export default function RootLayout({
     <ReduxProvider>
       <html lang="en">
         <body className={inter.className}>
-          <Navbar />
-          {children}
+          <ProvideChakra>
+            <Navbar />
+            {children}
+          </ProvideChakra>
         </body>
       </html>
     </ReduxProvider>

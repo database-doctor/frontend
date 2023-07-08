@@ -1,0 +1,15 @@
+// app/providers.tsx
+"use client";
+
+import { CacheProvider } from "@chakra-ui/next-js";
+import { ChakraProvider } from "@chakra-ui/react";
+
+export function ProvideChakra({ children }: { children: React.ReactNode }) {
+  return (
+    <CacheProvider>
+      <ChakraProvider>{children}</ChakraProvider>
+    </CacheProvider>
+  );
+}
+
+export default ProvideChakra;
