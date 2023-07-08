@@ -26,6 +26,7 @@ export const options: NextAuthOptions = {
       async authorize(credentials) {
         // Retrieve user data to verify with credentials
         const user = { id: "42", name: "Adrian", password: "pwd" };
+        // TODO: Add logic to validate user & password against DB
 
         if (
           credentials?.username === user.name &&
