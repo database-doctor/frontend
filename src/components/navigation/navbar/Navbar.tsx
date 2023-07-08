@@ -1,14 +1,11 @@
 "use client";
 
 import React from "react";
-import { useAppSelector } from "@/hooks";
-import { selectAuthState, selectUser } from "@/store/features/authSlice";
 import { User } from "@/types/User";
+import { Button } from "@chakra-ui/react";
 
 function Navbar() {
-  const authState: boolean = useAppSelector(selectAuthState);
-  const user: User | undefined = useAppSelector(selectUser);
-  return <div>Logged in: {authState ? "true" : "false"}</div>;
+  return <div>Navbar</div>;
 }
 
 export default Navbar;
