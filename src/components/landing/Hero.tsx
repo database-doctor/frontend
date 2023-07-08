@@ -18,7 +18,7 @@ export default function Hero() {
         textAlign={"center"}
         align={"center"}
         spacing={{ base: 8, md: 10 }}
-        // py={{ base: 20, md: 28 }}
+        py={{ base: 20, md: 25 }}
       >
         <Heading
           fontWeight={600}
