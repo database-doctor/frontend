@@ -15,7 +15,12 @@ const query = gql`
 async function Page() {
   const { data } = await getClient().query({ query });
   console.log(data);
-  return <div>{data.user.name}</div>;
+  return (
+    <>
+      <div>{data.user.name}</div>
+      <div>{data.user.email}</div>
+    </>
+  );
 }
 
 export default Page;

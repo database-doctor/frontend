@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import ProvideChakra from "@/chakraprovider";
 import Navbar from "./components/navigation/navbar/Navbar";
 const inter = Inter({ subsets: ["latin"] });
+import { ApolloWrapper } from "@/apollo-provider";
 
 export const metadata = {
   title: "Database Doctors",
@@ -18,11 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ProvideChakra>
-          {/* @ts-ignore */}
-          <Navbar />
-          {children}
-        </ProvideChakra>
+        <ApolloWrapper>
+          <ProvideChakra>
+            {/* @ts-ignore */}
+            <Navbar />
+            {children}
+          </ProvideChakra>
+        </ApolloWrapper>
       </body>
     </html>
   );
