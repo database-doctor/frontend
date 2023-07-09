@@ -11,6 +11,8 @@ import {
   IconProps,
 } from "@chakra-ui/react";
 
+import NextLink from "next/link";
+
 export default function Hero() {
   return (
     <Container maxW={"5xl"}>
@@ -36,18 +38,22 @@ export default function Hero() {
           databases to make better architectural decisions.
         </Text>
         <Stack spacing={6} direction={"row"}>
-          <Button
-            rounded={"full"}
-            px={6}
-            colorScheme={"pink"}
-            bg={"pink.400"}
-            _hover={{ bg: "pink.500" }}
-          >
-            Get started
-          </Button>
-          <Button rounded={"full"} px={6}>
-            Learn more
-          </Button>
+          <NextLink href="/sign-up" passHref>
+            <Button
+              rounded={"full"}
+              px={6}
+              colorScheme={"pink"}
+              bg={"pink.400"}
+              _hover={{ bg: "pink.500" }}
+            >
+              Get started
+            </Button>
+          </NextLink>
+          <NextLink href="/dashboard" passHref>
+            <Button rounded={"full"} px={6}>
+              Sign In
+            </Button>
+          </NextLink>
         </Stack>
         <Flex w={"full"}>
           <Illustration

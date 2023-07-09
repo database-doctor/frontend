@@ -1,49 +1,15 @@
-"use client";
+import PublicNavbar from "./PublicNavbar";
+import LoggedInNavbar from "./LoggedInNavbar";
 
-import { ReactNode } from "react";
-import {
-  Box,
-  Flex,
-  HStack,
-  Link,
-  IconButton,
-  useDisclosure,
-  useColorModeValue,
-  Image,
-} from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-
-const Links = ["Application Features", "SQL Demos", "Team"];
-
-const NavLink = ({ children }: { children: ReactNode }) => (
-  <Link
-    px={2}
-    py={1}
-    rounded={"md"}
-    _hover={{
-      textDecoration: "none",
-      bg: useColorModeValue("gray.200", "gray.700"),
-    }}
-    href={"#"}
-  >
-    {children}
-  </Link>
-);
+import { getServerSession } from "next-auth/next";
+import { options } from "@/app/api/auth/[...nextauth]/options";
 
 export default async function Navbar() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const session = await getServerSession(options);
   return (
     <>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-          <IconButton
-            size={"md"}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={"Open Menu"}
-            display={{ md: "none" }}
-            onClick={isOpen ? onClose : onOpen}
-          />
+      {session ? <LoggedInNavbar /> : <PublicNavbar />}
+      {/* <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <HStack spacing={8} alignItems={"center"}>
             <Box sx={{ width: "20%" }}>
               <Image src="/logo2.png" alt="Database Doctors Logo" />
@@ -58,8 +24,7 @@ export default async function Navbar() {
               ))}
             </HStack>
           </HStack>
-        </Flex>
-      </Box>
+        </Flex> */}
     </>
   );
 }
