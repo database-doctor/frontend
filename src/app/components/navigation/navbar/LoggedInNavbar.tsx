@@ -90,7 +90,7 @@ function LoggedInNavbar() {
               <MenuItem>
                 <SettingsIcon boxSize={6} paddingRight={2} /> Account Settings
               </MenuItem>
-              <MenuItem onClick={() => signOut()}>
+              <MenuItem onClick={() => signOut({ callbackUrl: "/" })}>
                 <Icon boxSize={6} paddingRight={2} as={LogoutIcon} />
                 Logout
               </MenuItem>
