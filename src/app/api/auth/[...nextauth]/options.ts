@@ -17,6 +17,7 @@ export const options: NextAuthOptions = {
           image: profile.avatar_url,
         };
       },
+      id: "github",
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
