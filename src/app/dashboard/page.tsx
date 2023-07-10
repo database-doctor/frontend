@@ -3,18 +3,29 @@ import React from "react";
 import { getClient } from "@/lib/client";
 import { gql } from "@apollo/client";
 
-const query = gql`
+import { getServerSession } from "next-auth/next";
+import { options } from "@/app/api/auth/[...nextauth]/options";
+
+const query = (userId: number) => {
+  return gql`
   query GetUser {
-    user(id: 3) {
+    user(id: ${userId}) {
       email
       name
     }
   }
 `;
+};
 
 async function Page() {
-  const { data } = await getClient().query({ query });
-  console.log(data);
+  const session = await getServerSession(options);
+
+  if (!session || !session.user || !session.user.userId) return;
+
+  const { data } = await getClient().query({
+    query: query(session.user.userId),
+  });
+  // console.log(data);
   return (
     <>
       <div>{data.user.name}</div>

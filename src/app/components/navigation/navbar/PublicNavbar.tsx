@@ -38,11 +38,11 @@ function PublicNavbar() {
           <Box sx={{ width: "20%" }}>
             <Image src="/logo2.png" alt="Database Doctors Logo" />
           </Box>
-          <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
+          {/* <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
             {Links.map((link) => (
               <NavLink key={link}>{link}</NavLink>
             ))}
-          </HStack>
+          </HStack> */}
         </HStack>
       </Flex>
     </Box>
