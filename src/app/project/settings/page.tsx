@@ -2,12 +2,12 @@
 import React from "react";
 
 import PageTitle from "@/app/components/reusable/PageTitle";
-function ProjectDashboardPage() {
+function ProjectSettingsPage() {
   return (
     <>
-      <PageTitle title={"Dashboard: Project Name"} />
+      <PageTitle title={"Settings: Project Name"} />
     </>
   );
 }
 
-export default ProjectDashboardPage;
+export default ProjectSettingsPage;
