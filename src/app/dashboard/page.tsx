@@ -6,6 +6,7 @@ import { gql } from "@apollo/client";
 import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
+import Dashboard from "../components/dashboard/Dashboard";
 const query = (userId: number) => {
   return gql`
   query GetUser {
@@ -25,11 +26,12 @@ async function Page() {
   const { data } = await getClient().query({
     query: query(session.user.userId),
   });
-  // console.log(data);
+
   return (
     <>
-      <div>{data.user.name}</div>
-      <div>{data.user.email}</div>
+      <div>
+        <Dashboard />
+      </div>
     </>
   );
 }

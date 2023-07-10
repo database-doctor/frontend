@@ -106,3 +106,8 @@ a {
     color-scheme: dark;
   }
 }
+
+.container {
+  padding-block: 1.5em;
+  padding-inline: 2em;
+}
