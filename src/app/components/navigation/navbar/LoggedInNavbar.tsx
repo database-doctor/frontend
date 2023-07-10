@@ -26,7 +26,8 @@ import {
 
 import { SettingsIcon } from "@chakra-ui/icons";
 import LogoutIcon from "@mui/icons-material/Logout";
-
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 const query = (userId: number) => gql`
   query GetUser {
     user(id: ${userId}) {
@@ -67,36 +68,44 @@ function LoggedInNavbar({ userId }: { userId: number }) {
             ))}
           </HStack>
         </HStack>
-        <Stack direction={"row"} spacing={7}>
-          <Menu>
-            <MenuButton
-              as={Button}
-              rounded={"full"}
-              variant={"link"}
-              cursor={"pointer"}
-              minW={0}
-            >
-              <Avatar
-                size={"sm"}
-                name={data.user.name}
-                src={"https://avatars.dicebear.com/api/male/username.svg"}
-              />
-            </MenuButton>
-            <MenuList alignItems={"center"}>
-              <Center>
-                <p>{data.user.name}</p>
-              </Center>
-              <MenuDivider />
-              <MenuItem>
-                <SettingsIcon boxSize={6} paddingRight={2} /> Account Settings
-              </MenuItem>
-              <MenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-                <Icon boxSize={6} paddingRight={2} as={LogoutIcon} />
-                Logout
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </Stack>
+        <Flex alignItems={"center"} justifyContent={"space-between"}>
+          <Icon
+            as={NotificationsNoneOutlinedIcon}
+            boxSize={6}
+            cursor={"pointer"}
+            marginRight={6}
+          />
+          <Stack direction={"row"} spacing={7}>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rounded={"full"}
+                variant={"link"}
+                cursor={"pointer"}
+                minW={0}
+              >
+                <Avatar
+                  size={"sm"}
+                  name={data.user.name}
+                  src={"https://avatars.dicebear.com/api/male/username.svg"}
+                />
+              </MenuButton>
+              <MenuList alignItems={"center"}>
+                <Center>
+                  <p>{data.user.name}</p>
+                </Center>
+                <MenuDivider />
+                <MenuItem>
+                  <SettingsIcon boxSize={6} paddingRight={2} /> Account Settings
+                </MenuItem>
+                <MenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+                  <Icon boxSize={6} paddingRight={2} as={LogoutIcon} />
+                  Logout
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Stack>
+        </Flex>
       </Flex>
     </Box>
   );
