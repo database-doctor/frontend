@@ -27,9 +27,9 @@ import {
 import { SettingsIcon } from "@chakra-ui/icons";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-const query = gql`
+const query = (userId: number) => gql`
   query GetUser {
-    user(id: 3) {
+    user(id: ${userId}) {
       email
       name
     }
@@ -51,8 +51,8 @@ const NavLink = ({ children }: { children: ReactNode }) => (
   </Link>
 );
 
-function LoggedInNavbar() {
-  const { data } = useSuspenseQuery(query) as any;
+function LoggedInNavbar({ userId }: { userId: number }) {
+  const { data } = useSuspenseQuery(query(userId)) as any;
   const Links = ["Dashboard"];
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
