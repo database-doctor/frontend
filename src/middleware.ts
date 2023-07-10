@@ -12,8 +12,8 @@ export default withAuth(
     console.log(request.nextauth.token);
 
     if (
-      request.nextUrl.pathname.startsWith("/dashboard") &&
-      request.nextauth.token?.role !== "user"
+      request.nextUrl.pathname.startsWith("/protected") &&
+      request.nextauth.token?.role !== "correct-access-role"
     ) {
       return NextResponse.rewrite(new URL("/denied", request.url));
     }
