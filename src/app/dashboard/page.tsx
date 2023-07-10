@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
 import Dashboard from "../components/dashboard/Dashboard";
+
 const query = (userId: number) => {
   return gql`
   query GetUser {

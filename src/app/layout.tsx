@@ -23,7 +23,7 @@ export default function RootLayout({
           <ProvideChakra>
             {/* @ts-ignore */}
             <Navbar />
-            <div className={"container"}>{children}</div>
+            {children}
           </ProvideChakra>
         </ApolloWrapper>
       </body>
