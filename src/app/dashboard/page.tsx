@@ -30,7 +30,8 @@ async function Page() {
   return (
     <>
       <div>
-        <Dashboard />
+        {/* @ts-ignore */}
+        <Dashboard userId={session.user.userId} />
       </div>
     </>
   );
