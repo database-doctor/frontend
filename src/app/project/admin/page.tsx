@@ -3,11 +3,13 @@ import React from "react";
 
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
+import Users from "@/app/components/project/admin/Users";
+
 import PageTitle from "@/app/components/reusable/PageTitle";
 function ProjectAdminPage() {
   return (
     <>
-      <PageTitle title={"Admin: Project Name"} />
+      <PageTitle title={"Admin Portal: Project Name"} />
       <br />
       <Tabs>
         <TabList>
@@ -18,7 +20,7 @@ function ProjectAdminPage() {
 
         <TabPanels>
           <TabPanel>
-            <p>users!</p>
+            <Users />
           </TabPanel>
           <TabPanel>
             <p>roles!</p>
