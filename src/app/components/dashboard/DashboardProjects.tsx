@@ -21,10 +21,9 @@ import {
   FormControl,
   Stack,
   SimpleGrid,
-  CardFooter,
-  Text,
-  CardHeader,
 } from "@chakra-ui/react";
+
+import ProjectCard from "./ProjectCard";
 
 import { gql, useMutation } from "@apollo/client";
 
@@ -123,47 +122,14 @@ function DashboardProjects({ userId }: { userId: number }) {
 
       <SimpleGrid
         spacing={6}
-        templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+        templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
       >
-        <Card>
-          <CardHeader>
-            <Heading size="md"> Project Title</Heading>
-          </CardHeader>
-          <CardBody>
-            <Text>
-              View a summary of all your customers over the last month.
-            </Text>
-          </CardBody>
-          <CardFooter>
-            <Button>Open</Button>
-          </CardFooter>
-        </Card>
-        <Card>
-          <CardHeader>
-            <Heading size="md"> Customer dashboard</Heading>
-          </CardHeader>
-          <CardBody>
-            <Text>
-              View a summary of all your customers over the last month.
-            </Text>
-          </CardBody>
-          <CardFooter>
-            <Button>View here</Button>
-          </CardFooter>
-        </Card>
-        <Card>
-          <CardHeader>
-            <Heading size="md"> Customer dashboard</Heading>
-          </CardHeader>
-          <CardBody>
-            <Text>
-              View a summary of all your customers over the last month.
-            </Text>
-          </CardBody>
-          <CardFooter>
-            <Button>View here</Button>
-          </CardFooter>
-        </Card>
+        <ProjectCard />
+        <ProjectCard />
+        <ProjectCard />
+        <ProjectCard />
+        <ProjectCard />
+        <ProjectCard />
       </SimpleGrid>
     </>
   );
