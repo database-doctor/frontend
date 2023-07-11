@@ -8,7 +8,7 @@ import Users from "@/app/components/project/admin/Users";
 import PageTitle from "@/app/components/reusable/PageTitle";
 function ProjectAdminPage() {
   const params = useSearchParams();
-  console.log(params);
+  console.log(params.get("projectId"));
 
   return (
     <>
