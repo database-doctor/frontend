@@ -6,8 +6,10 @@ import { gql } from "@apollo/client";
 import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
-import CommonSqlQueries from "../../components/project/trending/CommonSqlQueries";
-import CommonUserQueries from "../../components/project/trending/CommonUserQueries";
+import CommonSqlQueries from "@/app/components/project/trending/CommonSqlQueries";
+import CommonUserQueries from "@/app/components/project/trending/CommonUserQueries";
+import CommonColumnQueries from "@/app/components/project/trending/CommonColumnQueries";
+import CommonTableQueries from "@/app/components/project/trending/CommonTableQueries";
 
 const query = (userId: number) => {
   return gql`
@@ -33,6 +35,8 @@ async function Page() {
     <>
       <div>
         <CommonSqlQueries/>
+        <CommonColumnQueries/>
+        <CommonTableQueries/>
         <CommonUserQueries/>
       </div>
     </>
