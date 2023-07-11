@@ -25,7 +25,7 @@ import {
 
 import ProjectCard from "./ProjectCard";
 
-import { gql, useMutation, useQuery, useSuspenseQuery } from "@apollo/client";
+import { gql, useMutation, useSuspenseQuery } from "@apollo/client";
 
 const CREATE_PROJECT_MUTATION = gql`
 mutation CreateProject($newProject: CreateProjectInput!)${""} {
