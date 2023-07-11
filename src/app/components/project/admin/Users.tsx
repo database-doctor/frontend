@@ -35,6 +35,7 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function Users() {
   return (
@@ -55,6 +56,15 @@ function Users() {
           </InputGroup>
         </div>
         <Flex>
+          <Button
+            color={"pink.400"}
+            outline={"2px solid"}
+            outlineColor={"pink.400"}
+            marginRight={6}
+          >
+            <Icon as={PersonAddIcon} marginRight={2} />
+            Add User
+          </Button>
           <Button
             color={"pink.400"}
             outline={"2px solid"}
