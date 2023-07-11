@@ -38,19 +38,30 @@ export const options: NextAuthOptions = {
       },
       async authorize(credentials) {
         // Retrieve user data to verify with credentials // TODO: API Call
-        const user = {
-          id: "42",
-          name: "Adrian",
-          password: "pwd",
-          role: "admin",
-        };
-        // TODO: Add logic to validate user & password against DB
 
-        if (
-          credentials?.username === user.name &&
-          credentials?.password === user.password
-        ) {
-          return user;
+        if (!credentials || !credentials.username) {
+          return null;
+        }
+
+        const query = gql`
+          query GetUserByUsername {
+            userByUsername(username: "${credentials.username}") {
+              name,
+              email,
+              passwordHash,
+              passwordSalt,
+              userId,
+              username,
+              createdAt
+            }
+          }
+        `;
+
+        const res = await getClient().query({ query });
+
+        // TODO : We should not be validating this on the frontend. We will refactor this to the backend.
+        if (credentials?.password === res.data.userByUsername.passwordHash) {
+          return { ...res.data.userByUsername };
         } else {
           return null;
         }
@@ -95,13 +106,13 @@ export const options: NextAuthOptions = {
         } else {
           // ? User does not exist - Create the user in our DB, then inject profile information into session
           const CREATE_USER_MUTATION = gql`
-            mutation CreateUser($newUser: CreateUserInput!)${""} {
+            mutation CreateUser($newUser: CreateUserInput!) {
               createUser(newUser: $newUser) {
-                email,
-                name,
-                userId,
-                username,
-                createdAt,
+                email
+                name
+                userId
+                username
+                createdAt
               }
             }
           `;
@@ -137,7 +148,8 @@ export const options: NextAuthOptions = {
         return true;
       } else if (account?.provider === "credentials") {
         // Todo : fetch userId & other information from our DB and inject profile information
-
+        console.log("---User---");
+        console.log(user);
         return true;
       }
 
