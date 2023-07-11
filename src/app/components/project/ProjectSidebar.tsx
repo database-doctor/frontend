@@ -1,11 +1,12 @@
-import React from "react";
+"use client";
 
+import React from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Box,
   Flex,
   Icon,
   useColorModeValue,
-  Link,
   FlexProps,
   Stack,
 } from "@chakra-ui/react";
@@ -14,48 +15,70 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import NextLink from "next/link";
 
 interface LinkItemProps {
   name: string;
   icon: typeof DashboardIcon;
+  link: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: "Dashboard", icon: DashboardIcon },
-  { name: "Trending", icon: TrendingUpIcon },
-  { name: "Settings", icon: SettingsIcon },
-  { name: "Admin", icon: AdminPanelSettingsIcon },
+  { name: "Dashboard", icon: DashboardIcon, link: "/project/dashboard" },
+  { name: "Trending", icon: TrendingUpIcon, link: "/project/trending" },
+  { name: "Settings", icon: SettingsIcon, link: "/project/trending" },
+  { name: "Admin", icon: AdminPanelSettingsIcon, link: "/project/admin" },
 ];
 
 function ProjectSidebar() {
+  const params = useSearchParams();
+  const projectId = params.get("projectId");
+
   return (
-    <Box
-      height={"100%"}
-      bg={useColorModeValue("white", "gray.900")}
-      borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: 60 }}
-    >
-      <Stack>
-        {LinkItems.map((link) => (
-          <NavItem key={link.name} icon={link.icon}>
-            {link.name}
-          </NavItem>
-        ))}
-      </Stack>
-    </Box>
+    <>
+      <Box
+        height={"100%"}
+        bg={useColorModeValue("white", "gray.900")}
+        borderRight="1px"
+        borderRightColor={useColorModeValue("gray.200", "gray.700")}
+        w={{ base: "full", md: 60 }}
+      >
+        {projectId ? (
+          <Stack>
+            {LinkItems.map((link) => (
+              <NavItem
+                key={link.name}
+                icon={link.icon}
+                link={link.link}
+                projectId={projectId}
+              >
+                {link.name}
+              </NavItem>
+            ))}
+          </Stack>
+        ) : null}
+      </Box>
+    </>
   );
 }
 
 interface NavItemProps extends FlexProps {
   icon: typeof DashboardIcon;
+  link: string;
   children: any;
+  projectId: string;
 }
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({
+  icon,
+  link,
+  projectId,
+  children,
+  ...rest
+}: NavItemProps) => {
   return (
-    <Link
-      href="#"
+    <NextLink
+      href={link + "?projectId=" + projectId}
       style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
+      passHref
     >
       <Flex
         align="center"
@@ -83,7 +106,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
         )}
         {children}
       </Flex>
-    </Link>
+    </NextLink>
   );
 };
 
