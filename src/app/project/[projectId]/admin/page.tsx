@@ -1,14 +1,14 @@
 "use client";
 import React from "react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 import Users from "@/app/components/project/admin/Users";
 
 import PageTitle from "@/app/components/reusable/PageTitle";
 function ProjectAdminPage() {
-  const router = useRouter();
-  const projectId = router.query.id;
+  const params = useSearchParams();
+  console.log(params);
 
   return (
     <>
