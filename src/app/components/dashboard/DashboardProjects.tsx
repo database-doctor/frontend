@@ -34,8 +34,16 @@ mutation CreateProject($newProject: CreateProjectInput!)${""} {
       projectId,
       createdById,
       createdAt
-    },
-    
+    }
+}
+`;
+
+const CREATE_USER_PROJECT_TOKEN_MUTATION = gql`
+mutation CreateUserProjToken($newUserProjectToken: CreateUserProjectTokenInput!)${""} {
+  createUserProjectToken(newUserProjectToken: $newUserProjectToken) {
+    projectId,
+    userId,
+  }
 }
 `;
 
@@ -48,10 +56,14 @@ function DashboardProjects({ userId }: { userId: number }) {
   const [createProject, { data, loading, error }] = useMutation(
     CREATE_PROJECT_MUTATION
   );
+  const [createUserProjectToken] = useMutation(
+    CREATE_USER_PROJECT_TOKEN_MUTATION
+  );
 
   const onSubmitNewProject = () => {
     if (!newProjectName || !newProjectConnUrl) {
       alert("You must specify a project name and project connUrl");
+      return;
     }
 
     const newProject = {
@@ -64,6 +76,16 @@ function DashboardProjects({ userId }: { userId: number }) {
       variables: {
         newProject,
       },
+    }).then((res) => {
+      createUserProjectToken({
+        variables: {
+          newUserProjectToken: {
+            userId,
+            projectId: res.data.createProject.projectId,
+            accessToken: "what-is-this?",
+          },
+        },
+      });
     });
 
     onClose();
