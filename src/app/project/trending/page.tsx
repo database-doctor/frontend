@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
 import CommonSqlQueries from "../../components/project/trending/CommonSqlQueries";
+import CommonUserQueries from "../../components/project/trending/CommonUserQueries";
 
 const query = (userId: number) => {
   return gql`
@@ -31,9 +32,8 @@ async function Page() {
   return (
     <>
       <div>
-        {/* @ts-ignore */}
-        <CommonSqlQueries projectId={1} />
-        <CommonSqlQueries projectId={2} />
+        <CommonSqlQueries/>
+        <CommonUserQueries/>
       </div>
     </>
   );
