@@ -34,7 +34,8 @@ mutation CreateProject($newProject: CreateProjectInput!)${""} {
       projectId,
       createdById,
       createdAt
-    }
+    },
+    
 }
 `;
 
