@@ -25,7 +25,7 @@ import {
 
 import ProjectCard from "./ProjectCard";
 
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery, useSuspenseQuery } from "@apollo/client";
 
 const CREATE_PROJECT_MUTATION = gql`
 mutation CreateProject($newProject: CreateProjectInput!)${""} {
@@ -38,19 +38,44 @@ mutation CreateProject($newProject: CreateProjectInput!)${""} {
 }
 `;
 
+const CREATE_USER_PROJECT_TOKEN_MUTATION = gql`
+mutation CreateUserProjToken($newUserProjectToken: CreateUserProjectTokenInput!)${""} {
+  createUserProjectToken(newUserProjectToken: $newUserProjectToken) {
+    projectId,
+    userId,
+  }
+}
+`;
+
+const GET_USER_PROJECTS = (userId: number) => gql`
+query GetUserProjects {
+  allProjects(userId: ${userId}) {
+    projectId,
+    projectName,
+    createdAt,
+    createdBy
+  }
+}
+`;
+
 function DashboardProjects({ userId }: { userId: number }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectConnUrl, setNewProjectConnUrl] = useState("");
 
-  const [createProject, { data, loading, error }] = useMutation(
-    CREATE_PROJECT_MUTATION
+  const [createProject] = useMutation(CREATE_PROJECT_MUTATION);
+  const [createUserProjectToken] = useMutation(
+    CREATE_USER_PROJECT_TOKEN_MUTATION
   );
+
+  const { data } = useSuspenseQuery(GET_USER_PROJECTS(userId)) as any;
+  console.log(data);
 
   const onSubmitNewProject = () => {
     if (!newProjectName || !newProjectConnUrl) {
       alert("You must specify a project name and project connUrl");
+      return;
     }
 
     const newProject = {
@@ -63,6 +88,16 @@ function DashboardProjects({ userId }: { userId: number }) {
       variables: {
         newProject,
       },
+    }).then((res) => {
+      createUserProjectToken({
+        variables: {
+          newUserProjectToken: {
+            userId,
+            projectId: res.data.createProject.projectId,
+            accessToken: "what-is-this?",
+          },
+        },
+      });
     });
 
     onClose();
@@ -124,12 +159,15 @@ function DashboardProjects({ userId }: { userId: number }) {
         spacing={6}
         templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
       >
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
-        <ProjectCard />
+        {data.allProjects.map((project: any) => (
+          <ProjectCard
+            key={project.projectId}
+            title={project.projectName}
+            owner={project.createdBy}
+            createdDate={project.createdAt}
+            projectId={project.projectId}
+          />
+        ))}
       </SimpleGrid>
     </>
   );

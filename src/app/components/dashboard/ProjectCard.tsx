@@ -11,15 +11,26 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-function ProjectCard() {
+function ProjectCard({
+  title,
+  owner,
+  createdDate,
+  projectId,
+}: {
+  title: string;
+  owner: string;
+  createdDate: string;
+  projectId: number;
+}) {
   return (
     <Card variant={"elevated"}>
       <CardHeader paddingBottom={1}>
-        <Heading size="md"> Project Title</Heading>
+        <Heading size="md"> {title}</Heading>
       </CardHeader>
       <CardBody paddingTop={2}>
-        <Text>Owner: Adrian Davila</Text>
-        <Text>Created: 11/30/2023</Text>
+        <Text>Owner: {owner}</Text>
+        <Text>Created: {createdDate}</Text>
+        <Text>ID: {projectId}</Text>
       </CardBody>
       <CardFooter paddingTop={0}>
         <Button>Open</Button>
