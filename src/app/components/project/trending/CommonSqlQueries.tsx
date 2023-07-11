@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useSearchParams } from "next/navigation";
 
 import {
   Table,
@@ -16,7 +17,7 @@ import { gql, useSuspenseQuery } from "@apollo/client";
 
 const GET_COMMON_QUERIES = (projectId: number) => gql`
 query GetCommonQueries {
-  commonSqlQueries(projectId: 1) {
+  commonSqlQueries(projectId: ${projectId}) {
     username
     queryType
     queryStatement
@@ -29,7 +30,9 @@ query GetCommonQueries {
 }
 `;
 
-function CommonSqlQueries({ projectId }: { projectId: number }) {
+function CommonSqlQueries() {
+  const params = useSearchParams();
+  const projectId = Number(params.get('projectId'));
   const { data } = useSuspenseQuery(GET_COMMON_QUERIES(projectId)) as any;
   console.log(data);
 
@@ -51,7 +54,7 @@ function CommonSqlQueries({ projectId }: { projectId: number }) {
         </Thead>
         <Tbody>
             {data.commonSqlQueries.map((sqlQuery: any) => (
-              <Tr>
+              <Tr key={sqlQuery.username}>
                 <Td>{sqlQuery.username}</Td>
                 <Td>{sqlQuery.queryType}</Td>
                 <Td>{sqlQuery.queryStatement}</Td>
