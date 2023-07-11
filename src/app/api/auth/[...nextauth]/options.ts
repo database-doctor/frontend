@@ -82,6 +82,7 @@ export const options: NextAuthOptions = {
           console.log("ERROR");
           db_data = null;
         }
+        console.log("DB DATA -----");
         console.log(db_data);
 
         if (db_data) {
@@ -94,8 +95,8 @@ export const options: NextAuthOptions = {
         } else {
           // ? User does not exist - Create the user in our DB, then inject profile information into session
           const CREATE_USER_MUTATION = gql`
-            mutation CreateUser($newUser: CreateUserInput!) {
-              createUser(${"newUser"}: $newUser) {
+            mutation CreateUser($newUser: CreateUserInput!)${""} {
+              createUser(newUser: $newUser) {
                 email,
                 name,
                 userId,
@@ -108,7 +109,7 @@ export const options: NextAuthOptions = {
           const newUser = {
             username: user.email,
             email: user.email,
-            name: user.name,
+            name: user.name || "No Name Found",
             passwordHash: "no-password",
             passwordSalt: "no-password",
           };
@@ -123,12 +124,14 @@ export const options: NextAuthOptions = {
 
           console.log("POST SUCCESSFUL");
 
+          console.log(response);
+
           // response.data: { createUser : { email, name, userId, username, createdAt }}
-          user.email = response.data.email;
-          user.name = response.data.name;
-          user.userId = response.data.userId;
-          user.username = response.data.username;
-          user.createdAt = response.data.createdAt;
+          user.email = response.data.createUser.email;
+          user.name = response.data.createUser.name;
+          user.userId = response.data.createUser.userId;
+          user.username = response.data.createUser.username;
+          user.createdAt = response.data.createUser.createdAt;
         }
 
         return true;

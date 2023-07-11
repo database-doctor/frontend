@@ -26,7 +26,6 @@ import {
 
 import { SettingsIcon } from "@chakra-ui/icons";
 import LogoutIcon from "@mui/icons-material/Logout";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 const query = (userId: number) => gql`
   query GetUser {

@@ -26,4 +26,4 @@ export default withAuth(
 );
 
 // Applies next-auth only to matching routes - can be regex
-export const config = { matcher: ["/dashboard"] };
+export const config = { matcher: ["/protect-this"] };
