@@ -6,7 +6,7 @@ import { gql } from "@apollo/client";
 import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
-import CommonSqlQueries from "../../components/project/trending/CommonQueries";
+import CommonSqlQueries from "../../components/project/trending/CommonSqlQueries";
 
 const query = (userId: number) => {
   return gql`
@@ -33,6 +33,7 @@ async function Page() {
       <div>
         {/* @ts-ignore */}
         <CommonSqlQueries projectId={1} />
+        <CommonSqlQueries projectId={2} />
       </div>
     </>
   );
