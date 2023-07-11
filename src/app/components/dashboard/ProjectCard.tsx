@@ -10,6 +10,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 
 function ProjectCard({
   title,
@@ -33,7 +34,12 @@ function ProjectCard({
         <Text>ID: {projectId}</Text>
       </CardBody>
       <CardFooter paddingTop={0}>
-        <Button>Open</Button>
+        <NextLink
+          href={"/project/dashboard" + "?projectId=" + projectId}
+          passHref
+        >
+          <Button>Open</Button>
+        </NextLink>
       </CardFooter>
     </Card>
   );
