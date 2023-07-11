@@ -24,6 +24,10 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 
+import { gql, useMutation } from "@apollo/client";
+
+import { redirect, useRouter } from "next/navigation";
+
 const avatars = [
   {
     name: "Ryan Florence",
@@ -47,11 +51,27 @@ const avatars = [
   },
 ];
 
+const CREATE_USER_MUTATION = gql`
+  mutation CreateUser($newUser: CreateUserInput!) {
+    createUser(newUser: $newUser) {
+      email
+      name
+      userId
+      username
+      createdAt
+    }
+  }
+`;
+
 export function SignUp() {
   const [newUserName, setNewUserName] = useState("");
   const [newUserUsername, setNewUserUsername] = useState("");
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
+
+  const [createUser] = useMutation(CREATE_USER_MUTATION);
+
+  const router = useRouter();
 
   let validName = true;
   let validUsername = true;
@@ -64,16 +84,24 @@ export function SignUp() {
     validEmail = !!newUserEmail;
     validPassword = !!newUserPassword;
 
-    if (validName && validUsername && validEmail && validPassword) {
-      const newUser = {
-        name: newUserName,
-        username: newUserUsername,
-        email: newUserEmail,
-        password: newUserPassword,
-      };
-      console.log(newUser);
-      // TODO: Submit form & redirect
+    if (!validName || !validUsername || !validEmail || !validPassword) {
+      alert("Must have all of: name, username, email, password");
+      return;
     }
+
+    const newUser = {
+      name: newUserName,
+      username: newUserUsername,
+      email: newUserEmail,
+      passwordHash: newUserPassword,
+      passwordSalt: newUserPassword,
+    };
+
+    createUser({
+      variables: {
+        newUser,
+      },
+    }).then(() => router.push("/dashboard"));
   };
 
   return (
