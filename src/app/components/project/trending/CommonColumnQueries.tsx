@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react"
 
 import { gql, useSuspenseQuery } from "@apollo/client";
+import { M_PLUS_1 } from "next/font/google";
 
 const GET_COMMON_COLUMNS = (projectId: number) => gql`
 query CommonColumnQueries {
@@ -27,7 +28,7 @@ query CommonColumnQueries {
 
 function CommonColumnQueries() {
   const params = useSearchParams();
-  const projectId = Number(params.get('projectId'));
+  const projectId = 1;// Number(params.get('projectId'));
   const { data } = useSuspenseQuery(GET_COMMON_COLUMNS(projectId)) as any;
   console.log(data);
 

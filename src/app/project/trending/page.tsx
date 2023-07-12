@@ -10,6 +10,7 @@ import CommonSqlQueries from "@/app/components/project/trending/CommonSqlQueries
 import CommonUserQueries from "@/app/components/project/trending/CommonUserQueries";
 import CommonColumnQueries from "@/app/components/project/trending/CommonColumnQueries";
 import CommonTableQueries from "@/app/components/project/trending/CommonTableQueries";
+import TableSnapshots from "@/app/components/project/trending/TableSnapshot";
 
 const query = (userId: number) => {
   return gql`
@@ -25,11 +26,11 @@ const query = (userId: number) => {
 async function Page() {
   const session = await getServerSession(options);
 
-  if (!session || !session.user || !session.user.userId) return;
+  // if (!session || !session.user || !session.user.userId) return;
 
-  const { data } = await getClient().query({
-    query: query(session.user.userId),
-  });
+  // const { data } = await getClient().query({
+  //   query: query(session.user.userId),
+  // });
 
   return (
     <>
@@ -38,6 +39,7 @@ async function Page() {
         <CommonColumnQueries/>
         <CommonTableQueries/>
         <CommonUserQueries/>
+        <TableSnapshots />
       </div>
     </>
   );

@@ -25,7 +25,7 @@ query CommonTableQueries {
 
 function CommonTableQueries() {
   const params = useSearchParams();
-  const projectId = Number(params.get('projectId'));
+  const projectId = 1;// Number(params.get('projectId'));
   const { data } = useSuspenseQuery(GET_COMMON_TABLES(projectId)) as any;
   console.log(data);
 

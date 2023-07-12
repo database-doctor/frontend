@@ -27,7 +27,7 @@ query CommonUserQuery {
 
 function CommonUserQueries() {
   const params = useSearchParams();
-  const projectId = Number(params.get('projectId'));
+  const projectId = 1;// Number(params.get('projectId'));
   const { data } = useSuspenseQuery(GET_COMMON_USERS(projectId)) as any;
   console.log(data);
 

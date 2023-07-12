@@ -29,7 +29,7 @@ query GetCommonQueries {
 
 function CommonSqlQueries() {
   const params = useSearchParams();
-  const projectId = Number(params.get('projectId'));
+  const projectId = 1;// Number(params.get('projectId'));
   const { data } = useSuspenseQuery(GET_COMMON_QUERIES(projectId)) as any;
   console.log(data);
 
