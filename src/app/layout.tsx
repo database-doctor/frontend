@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import ProvideChakra from "@/chakraprovider";
+import ProvideChakra from "@/app/config/chakraprovider";
 import Navbar from "@/components/navigation/navbar/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 import { ApolloWrapper } from "@/apollo-provider";
