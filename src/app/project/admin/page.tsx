@@ -3,9 +3,9 @@ import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
-import Users from "@/app/components/project/admin/Users";
+import Users from "@/components/project/admin/Users";
 
-import PageTitle from "@/app/components/reusable/PageTitle";
+import PageTitle from "@/components/reusable/PageTitle";
 function ProjectAdminPage() {
   const params = useSearchParams();
   console.log(params.get("projectId"));

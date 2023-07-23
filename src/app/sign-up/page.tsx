@@ -1,6 +1,6 @@
 import React from "react";
 
-import SignUp from "../components/sign-up/SignUp";
+import SignUp from "@/components/sign-up/SignUp";
 import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";

@@ -1,6 +1,6 @@
 import React from "react";
 
-import PageTitle from "@/app/components/reusable/PageTitle";
+import PageTitle from "@/components/reusable/PageTitle";
 
 function ProjectDashboardPage() {
   return (

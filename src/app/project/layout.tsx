@@ -2,7 +2,7 @@
 import React, { ReactNode } from "react";
 
 import { Box, Flex } from "@chakra-ui/react";
-import ProjectSidebar from "@/app/components/project/ProjectSidebar";
+import ProjectSidebar from "@/components/project/ProjectSidebar";
 
 function ProjectLayout({ children }: { children: React.ReactNode }) {
   return (
