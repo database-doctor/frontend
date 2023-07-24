@@ -1,0 +1,9 @@
+query GetUserProjects {
+  allProjects {
+    pid
+    name
+    createdAt
+    createdBy
+    dbUrl
+  }
+}
