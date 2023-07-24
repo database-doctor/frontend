@@ -4,6 +4,7 @@ import ProvideChakra from "@/app/config/chakraprovider";
 import Navbar from "@/components/navigation/navbar/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 import { ApolloWrapper } from "@/apollo-provider";
+import { ProvideSession } from "@/lib/sessionprovider";
 
 export const metadata = {
   title: "Database Doctors",
@@ -21,9 +22,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <ApolloWrapper>
           <ProvideChakra>
-            {/* @ts-ignore */}
-            <Navbar />
-            {children}
+            <ProvideSession>
+              {/* @ts-ignore */}
+              <Navbar />
+              {children}
+            </ProvideSession>
           </ProvideChakra>
         </ApolloWrapper>
       </body>
