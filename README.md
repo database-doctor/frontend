@@ -58,7 +58,7 @@ Required: a GitHub account (free)
 8. Copy the Client ID and put it into the `.env.local` with variable name `GITHUB_ID`
 9. Copy the Client Secret and put it into the `.env.local` with variable name `GITHUB_SECRET`. Please make sure to copy the secret because you won't be able to see it again.
 
-Now, your `.env.local` file should look like this:
+Now, your `.env.local` file should look like this (**These specific values will not work, follow the instructions to create your own secrets**):
 
 ```txt
 NEXTAUTH_SECRET=/718oFIyV0UEXfuPNZOvPs1mm/Gx+T8D5NZ0WK39/cQ=
