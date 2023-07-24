@@ -8,10 +8,7 @@ import { GithubProfile } from "next-auth/providers/github";
 import { getClient } from "@/lib/client";
 import { gql } from "@apollo/client";
 import { LoginUser } from "@/graphql/mutations/User.graphql";
-import {
-  LoginUserInput,
-  LoginUserOutput,
-} from "@/graphql/__generated__/graphql";
+import { LoginUserInput } from "@/graphql/__generated__/graphql";
 
 export const options: NextAuthOptions = {
   providers: [

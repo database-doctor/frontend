@@ -24,6 +24,8 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 
+import { RegisterUser } from "@/graphql/mutations/User.graphql";
+
 import { gql, useMutation } from "@apollo/client";
 
 import { redirect, useRouter } from "next/navigation";
@@ -51,25 +53,13 @@ const avatars = [
   },
 ];
 
-const CREATE_USER_MUTATION = gql`
-  mutation CreateUser($newUser: CreateUserInput!) {
-    createUser(newUser: $newUser) {
-      email
-      name
-      userId
-      username
-      createdAt
-    }
-  }
-`;
-
 export function SignUp() {
   const [newUserName, setNewUserName] = useState("");
   const [newUserUsername, setNewUserUsername] = useState("");
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
 
-  const [createUser] = useMutation(CREATE_USER_MUTATION);
+  const [createUser] = useMutation(RegisterUser);
 
   const router = useRouter();
 
@@ -93,8 +83,7 @@ export function SignUp() {
       name: newUserName,
       username: newUserUsername,
       email: newUserEmail,
-      passwordHash: newUserPassword,
-      passwordSalt: newUserPassword,
+      password: newUserPassword,
     };
 
     createUser({
