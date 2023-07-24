@@ -1,8 +1,8 @@
-query GetUserByUsername {
-  userByUsername(username: "adavila") {
+query GetUserProfile {
+  user {
     name
     email
-    password
+    uid
     username
     createdAt
   }

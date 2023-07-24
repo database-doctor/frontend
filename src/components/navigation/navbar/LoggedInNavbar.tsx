@@ -2,8 +2,6 @@
 import React from "react";
 import { ReactNode } from "react";
 import { signOut } from "next-auth/react";
-import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
-import { gql } from "@apollo/client";
 
 import {
   Box,
@@ -24,17 +22,11 @@ import {
   Icon,
 } from "@chakra-ui/react";
 
+import { GetUserProfileQuery } from "@/graphql/__generated__/graphql";
+
 import { SettingsIcon } from "@chakra-ui/icons";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-const query = (userId: number) => gql`
-  query GetUser {
-    user(id: ${userId}) {
-      email
-      name
-    }
-  }
-`;
 
 const NavLink = ({ children }: { children: ReactNode }) => (
   <Link
@@ -51,8 +43,7 @@ const NavLink = ({ children }: { children: ReactNode }) => (
   </Link>
 );
 
-function LoggedInNavbar({ userId }: { userId: number }) {
-  const { data } = useSuspenseQuery(query(userId)) as any;
+function LoggedInNavbar({ data }: { data: GetUserProfileQuery }) {
   const Links = ["Dashboard"];
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
