@@ -1,10 +1,6 @@
 import React from "react";
 
 import { getClient } from "@/lib/client";
-import { gql } from "@apollo/client";
-
-import { getServerSession } from "next-auth/next";
-import { options } from "@/app/api/auth/[...nextauth]/options";
 
 import Dashboard from "@/components/dashboard/Dashboard";
 
@@ -17,10 +13,6 @@ import { GetUserProjects } from "@/graphql/queries/Project.graphql";
 import { getAuthContext } from "@/utils/auth";
 
 async function Page() {
-  const session = await getServerSession(options);
-
-  if (!session?.user?.token) return;
-
   const res = await getClient().query({
     query: GetUserProjects,
     context: await getAuthContext(),
