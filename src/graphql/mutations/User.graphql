@@ -1,0 +1,11 @@
+mutation RegisterUser($newUser: RegisterUserInput!) {
+  registerUser(newUser: $newUser) {
+    token
+  }
+}
+
+mutation LoginUser($userCreds: LoginUserInput!) {
+  loginUser(userCreds: $userCreds) {
+    token
+  }
+}

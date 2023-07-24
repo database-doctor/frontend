@@ -7,6 +7,11 @@ import { GithubProfile } from "next-auth/providers/github";
 
 import { getClient } from "@/lib/client";
 import { gql } from "@apollo/client";
+import { LoginUser } from "@/graphql/mutations/User.graphql";
+import {
+  LoginUserInput,
+  LoginUserOutput,
+} from "@/graphql/__generated__/graphql";
 
 export const options: NextAuthOptions = {
   providers: [
@@ -25,10 +30,10 @@ export const options: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username:",
+        email: {
+          label: "Email:",
           type: "text",
-          placeholder: "username",
+          placeholder: "email",
         },
         password: {
           label: "Password:",
@@ -37,34 +42,24 @@ export const options: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        // Retrieve user data to verify with credentials // TODO: API Call
-
-        if (!credentials || !credentials.username) {
+        // Retrieve user data to verify with credentials
+        if (!credentials || !credentials.email || !credentials.password) {
           return null;
         }
 
-        const query = gql`
-          query GetUserByUsername {
-            userByUsername(username: "${credentials.username}") {
-              name,
-              email,
-              passwordHash,
-              passwordSalt,
-              userId,
-              username,
-              createdAt
-            }
-          }
-        `;
+        const userCreds: LoginUserInput = {
+          email: credentials.email,
+          password: credentials.password,
+        };
 
-        const res = await getClient().query({ query });
+        const res = await getClient().mutate({
+          mutation: LoginUser,
+          variables: {
+            userCreds,
+          },
+        });
 
-        // TODO : We should not be validating this on the frontend. We will refactor this to the backend.
-        if (credentials?.password === res.data.userByUsername.passwordHash) {
-          return { ...res.data.userByUsername };
-        } else {
-          return null;
-        }
+        return res ? { ...res.data.LoginUser } : null;
       },
     }),
   ],
