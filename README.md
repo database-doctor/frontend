@@ -79,3 +79,43 @@ from the frontend root directory.
 ## Tech stack
 
 - Next.js
+
+# Guide for Developers
+
+## Making GraphQL requests in Server Components
+
+Consider an example where the component `MyComponent` wants to query all user projects. The query is fedined in `@/graphql/queries/Project.graphql` and is imported.
+
+Then, we can execute the query in an async server component as follows:
+
+```ts
+import { getClient } from "@/lib/client";
+import { getServerSession } from "next-auth/next";
+import { options } from "@/app/api/auth/[...nextauth]/options";
+import { GetUserProjects } from "@/graphql/queries/Project.graphql";
+
+async function MyComponent() {
+  const session = await getServerSession(options);
+
+  // REQUEST THAT DOES NOT REQUIRE AUTHORIZATION HEADER
+  const res = await getClient().query({
+    query: GetUserProjects,
+  });
+
+  // REQUEST THAT REQUIRES AUTHORIZATION HEADER
+  const res = await getClient().query({
+    query: GetUserProjects,
+    context: {
+      headers: {
+        authorization: `Bearer ${session.user.token}`,
+      },
+    },
+  });
+
+  return (
+    <>
+      <div>Component that uses data goes here...</div>
+    </>
+  );
+}
+```
