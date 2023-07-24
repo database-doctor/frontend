@@ -59,7 +59,9 @@ export const options: NextAuthOptions = {
           },
         });
 
-        return res ? { ...res.data.LoginUser } : null;
+        console.log(res);
+
+        return res ? { ...res.data.loginUser } : null;
       },
     }),
   ],
@@ -142,9 +144,7 @@ export const options: NextAuthOptions = {
 
         return true;
       } else if (account?.provider === "credentials") {
-        // Todo : fetch userId & other information from our DB and inject profile information
-        console.log("---User---");
-        console.log(user);
+        // Todo : potentially fetch userId & other information from our DB and inject profile information
         return true;
       }
 
@@ -153,26 +153,15 @@ export const options: NextAuthOptions = {
     async jwt({ token, user }) {
       console.log("JWT Callback!");
       if (user) {
-        console.log("--- User ---");
-        console.log(user);
-      }
-
-      if (user) {
-        token.role = user.role;
-        token.userId = user.userId;
-        token.createdAt = user.createdAt;
-        token.email = user.email;
+        token.usertoken = user.token || "";
       }
       return token;
     },
     // For client components
     async session({ session, token }) {
-      console.log("Session callback!");
+      console.log("SESSION CALLBACK!");
       if (session?.user) {
-        session.user.role = token.role;
-        session.user.userId = token.userId as number | undefined;
-        session.user.createdAt = token.createdAt as EpochTimeStamp | undefined;
-        session.user.email = token.email as string | undefined;
+        session.user.token = token.usertoken;
       }
       return session;
     },
