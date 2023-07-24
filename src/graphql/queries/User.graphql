@@ -1,0 +1,9 @@
+query GetUserByUsername {
+  userByUsername(username: "adavila") {
+    name
+    email
+    password
+    username
+    createdAt
+  }
+}
