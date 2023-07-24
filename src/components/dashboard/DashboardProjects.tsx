@@ -73,7 +73,6 @@ function DashboardProjects({ data }: { data: GetUserProjectsQuery }) {
           newUserProjectToken: {
             uid: res.data.createProject.createdById,
             pid: res.data.createProject.pid,
-            token: "what-is-this?",
           },
         },
       });
