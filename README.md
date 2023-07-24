@@ -90,8 +90,7 @@ Then, we can execute the query in an async server component as follows:
 
 ```ts
 import { getClient } from "@/lib/client";
-import { getServerSession } from "next-auth/next";
-import { options } from "@/app/api/auth/[...nextauth]/options";
+import { getAuthContext } from "@/utils/auth";
 import { GetUserProjects } from "@/graphql/queries/Project.graphql";
 
 async function MyComponent() {
@@ -101,14 +100,9 @@ async function MyComponent() {
   });
 
   // REQUEST THAT REQUIRES AUTHORIZATION HEADER
-  const session = await getServerSession(options);
   const res = await getClient().query({
     query: GetUserProjects,
-    context: {
-      headers: {
-        authorization: `Bearer ${session.user.token}`,
-      },
-    },
+    context: await getAuthContext(),
   });
 
   return (

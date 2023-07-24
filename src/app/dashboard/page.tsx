@@ -14,6 +14,8 @@ import DashboardProjects from "@/components/dashboard/DashboardProjects";
 
 import { GetUserProjects } from "@/graphql/queries/Project.graphql";
 
+import { getAuthContext } from "@/utils/auth";
+
 async function Page() {
   const session = await getServerSession(options);
 
@@ -21,12 +23,8 @@ async function Page() {
 
   const res = await getClient().query({
     query: GetUserProjects,
-    context: {
-      headers: {
-        authorization: `Bearer ${session.user.token}`,
-      },
-    },
-  }); // TODO : Document this example
+    context: await getAuthContext(),
+  });
 
   return (
     <>
