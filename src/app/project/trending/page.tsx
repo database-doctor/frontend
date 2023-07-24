@@ -26,12 +26,6 @@ const query = (userId: number) => {
 async function Page() {
   const session = await getServerSession(options);
 
-  // if (!session || !session.user || !session.user.userId) return;
-
-  // const { data } = await getClient().query({
-  //   query: query(session.user.userId),
-  // });
-
   return (
     <>
       <div>

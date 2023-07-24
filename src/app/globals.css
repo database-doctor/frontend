@@ -121,3 +121,8 @@ a {
   align-items: center;
   justify-content: center;
 }
+
+.padded {
+  padding-block: 1.5em;
+  padding-inline: 2em;
+}

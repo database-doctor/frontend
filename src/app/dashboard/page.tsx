@@ -8,31 +8,35 @@ import { options } from "@/app/api/auth/[...nextauth]/options";
 
 import Dashboard from "@/components/dashboard/Dashboard";
 
-const query = (userId: number) => {
-  return gql`
-  query GetUser {
-    user(id: ${userId}) {
-      email
-      name
-    }
-  }
-`;
-};
+import PageTitle from "@/components/reusable/PageTitle";
+import DashboardStats from "@/components/dashboard/DashboardStats";
+import DashboardProjects from "@/components/dashboard/DashboardProjects";
+
+import { GetUserProjects } from "@/graphql/queries/Project.graphql";
 
 async function Page() {
   const session = await getServerSession(options);
 
-  if (!session || !session.user || !session.user.userId) return;
+  if (!session?.user?.token) return;
 
-  const { data } = await getClient().query({
-    query: query(session.user.userId),
-  });
+  const res = await getClient().query({
+    query: GetUserProjects,
+    context: {
+      headers: {
+        authorization: `Bearer ${session.user.token}`,
+      },
+    },
+  }); // TODO : Document this example
 
   return (
     <>
-      <div>
+      <div className="padded">
         {/* @ts-ignore */}
-        <Dashboard userId={session.user.userId} />
+        <PageTitle title={"User Dashboard"} />
+        <br />
+        <DashboardStats />
+        <br />
+        {/* <DashboardProjects /> */}
       </div>
     </>
   );
