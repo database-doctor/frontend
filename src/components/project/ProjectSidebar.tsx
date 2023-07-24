@@ -15,6 +15,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import DrawIcon from "@mui/icons-material/Draw";
 import NextLink from "next/link";
 
 interface LinkItemProps {
@@ -25,8 +26,9 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: "Dashboard", icon: DashboardIcon, link: "/project/dashboard" },
   { name: "Trending", icon: TrendingUpIcon, link: "/project/trending" },
-  { name: "Settings", icon: SettingsIcon, link: "/project/trending" },
+  { name: "Settings", icon: SettingsIcon, link: "/project/settings" },
   { name: "Admin", icon: AdminPanelSettingsIcon, link: "/project/admin" },
+  { name: "Template", icon: DrawIcon, link: "/project/template" },
 ];
 
 function ProjectSidebar() {
