@@ -27,81 +27,89 @@ import ProjectCard from "./ProjectCard";
 
 import { gql, useMutation, useSuspenseQuery } from "@apollo/client";
 
-const CREATE_PROJECT_MUTATION = gql`
-mutation CreateProject($newProject: CreateProjectInput!)${""} {
-    createProject(newProject: $newProject) {
-      projectName,
-      projectId,
-      createdById,
-      createdAt
-    }
-}
-`;
+import { GetUserProjectsQuery } from "@/graphql/__generated__/graphql";
 
-const CREATE_USER_PROJECT_TOKEN_MUTATION = gql`
-mutation CreateUserProjToken($newUserProjectToken: CreateUserProjectTokenInput!)${""} {
-  createUserProjectToken(newUserProjectToken: $newUserProjectToken) {
-    projectId,
-    userId,
-  }
-}
-`;
+import { getBearerFromToken } from "@/utils/clientauth";
 
-const GET_USER_PROJECTS = (userId: number) => gql`
-query GetUserProjects {
-  allProjects(userId: ${userId}) {
-    projectId,
-    projectName,
-    createdAt,
-    createdBy
-  }
-}
-`;
+import { useSession } from "next-auth/react";
 
-function DashboardProjects({ userId }: { userId: number }) {
+import {
+  CreateProject,
+  CreateUserProjectToken,
+} from "@/graphql/mutations/Project.graphql";
+
+function DashboardProjects({ data }: { data: GetUserProjectsQuery }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectConnUrl, setNewProjectConnUrl] = useState("");
 
-  const [createProject] = useMutation(CREATE_PROJECT_MUTATION);
-  const [createUserProjectToken] = useMutation(
-    CREATE_USER_PROJECT_TOKEN_MUTATION
-  );
+  const { data: session, status } = useSession();
 
-  const { data } = useSuspenseQuery(GET_USER_PROJECTS(userId)) as any;
-  console.log(data);
+  const [createProject] = useMutation(CreateProject, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
+  });
+  const [createUserProjectToken] = useMutation(CreateUserProjectToken, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
+  });
 
-  const onSubmitNewProject = () => {
+  async function postNewProject(data: any) {
+    console.log(data);
+    createProject({
+      variables: {
+        newProject: data.newProject,
+      },
+    }).then((res) => {
+      createUserProjectToken({
+        variables: {
+          newUserProjectToken: {
+            uid: res.data.createProject.createdById,
+            pid: res.data.createProject.pid,
+            token: "what-is-this?",
+          },
+        },
+      });
+    });
+
+    // TODO : Implement an express route to handle instead of what I'm currently doing above. This below was running into cors errors.
+    // if (!session?.user) return;
+    // console.log(data);
+    // const url = "http://localhost:8080/project";
+    // const response = await fetch(url, {
+    //   method: "POST",
+    //   mode: "cors",
+    //   headers: {
+    //     authorization: getBearerFromToken(session.user.token),
+    //   },
+    //   body: JSON.stringify(data),
+    // });
+    // const json = await response.json();
+    // return json;
+
+    onClose();
+  }
+
+  async function onSubmitNewProject() {
     if (!newProjectName || !newProjectConnUrl) {
       alert("You must specify a project name and project connUrl");
       return;
     }
 
     const newProject = {
-      projectName: newProjectName,
-      connUrl: newProjectConnUrl,
-      createdById: userId,
+      name: newProjectName,
+      dbUrl: newProjectConnUrl,
     };
 
-    createProject({
-      variables: {
-        newProject,
-      },
-    }).then((res) => {
-      createUserProjectToken({
-        variables: {
-          newUserProjectToken: {
-            userId,
-            projectId: res.data.createProject.projectId,
-            accessToken: "what-is-this?",
-          },
-        },
-      });
-    });
-
-    onClose();
-  };
+    postNewProject({ newProject });
+  }
 
   return (
     <>
@@ -148,6 +156,7 @@ function DashboardProjects({ userId }: { userId: number }) {
           </ModalBody>
 
           <ModalFooter>
+            {/* onClick={onSubmitNewProject} */}
             <Button colorScheme="pink" mr={3} onClick={onSubmitNewProject}>
               Submit
             </Button>
@@ -161,11 +170,11 @@ function DashboardProjects({ userId }: { userId: number }) {
       >
         {data.allProjects.map((project: any) => (
           <ProjectCard
-            key={project.projectId}
-            title={project.projectName}
+            key={project.pid}
+            title={project.name}
             owner={project.createdBy}
             createdDate={project.createdAt}
-            projectId={project.projectId}
+            projectId={project.pid}
           />
         ))}
       </SimpleGrid>

@@ -1,0 +1,14 @@
+mutation CreateProject($newProject: CreateProjectInput!) {
+  createProject(newProject: $newProject) {
+    pid
+    createdById
+  }
+}
+
+mutation CreateUserProjectToken(
+  $newUserProjectToken: CreateUserProjectTokenInput!
+) {
+  createUserProjectToken(newUserProjectToken: $newUserProjectToken) {
+    token
+  }
+}
