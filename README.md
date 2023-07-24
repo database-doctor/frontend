@@ -95,14 +95,13 @@ import { options } from "@/app/api/auth/[...nextauth]/options";
 import { GetUserProjects } from "@/graphql/queries/Project.graphql";
 
 async function MyComponent() {
-  const session = await getServerSession(options);
-
   // REQUEST THAT DOES NOT REQUIRE AUTHORIZATION HEADER
   const res = await getClient().query({
     query: GetUserProjects,
   });
 
   // REQUEST THAT REQUIRES AUTHORIZATION HEADER
+  const session = await getServerSession(options);
   const res = await getClient().query({
     query: GetUserProjects,
     context: {
