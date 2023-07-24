@@ -6,7 +6,13 @@ import { getClient } from "@/lib/client";
 import { getAuthContext } from "@/utils/auth";
 import { GetUserProjects } from "@/graphql/queries/Project.graphql";
 
-async function ServerComponentTemplate() {
+async function ServerComponentTemplate({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  console.log("Search params: ", searchParams);
+
   // * REQUEST THAT DOES NOT REQUIRE AUTHORIZATION HEADER
   // * (commented out because this specific query requires authorization)
   // const res = await getClient().query({
@@ -23,6 +29,11 @@ async function ServerComponentTemplate() {
     <>
       <div>ServerComponentTemplate</div>
       <div>{JSON.stringify(res2)}</div>
+      <div>
+        The project id is: {searchParams?.projectId}. This was retrieved by
+        adding the searchParams prop to the server component. You can use this
+        to make your gql queries.
+      </div>
       <br />
       <ClientComponentExample />
     </>
