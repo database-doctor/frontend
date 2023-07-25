@@ -1,0 +1,10 @@
+mutation CreateRole($newRole: CreateRoleInput!) {
+  createRole(newRole: $newRole) {
+    name
+    pid
+    rid
+    permissions {
+      name
+    }
+  }
+}
