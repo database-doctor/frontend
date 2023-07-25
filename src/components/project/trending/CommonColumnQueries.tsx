@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useSearchParams } from "next/navigation";
+import { CommonColumnQueriesQuery } from "@/graphql/__generated__/graphql";
 
 import {
   Table,
@@ -11,27 +11,7 @@ import {
   TableCaption,
 } from "@chakra-ui/react"
 
-import { gql, useSuspenseQuery } from "@apollo/client";
-import { M_PLUS_1 } from "next/font/google";
-
-const GET_COMMON_COLUMNS = (projectId: number) => gql`
-query CommonColumnQueries {
-  commonColumnQueries(projectId: ${projectId}) {
-    schemaName
-    tableName
-    columnTypeName
-    columnName
-    columnId
-  }
-}
-`;
-
-function CommonColumnQueries() {
-  const params = useSearchParams();
-  const projectId = 1;// Number(params.get('projectId'));
-  const { data } = useSuspenseQuery(GET_COMMON_COLUMNS(projectId)) as any;
-  console.log(data);
-
+function CommonColumns({commonColumns} : {commonColumns: CommonColumnQueriesQuery}) {
   return (
     <>
       <Table variant="simple">
@@ -46,10 +26,10 @@ function CommonColumnQueries() {
           </Tr>
         </Thead>
         <Tbody>
-            {data.commonColumnQueries?.map((columnQuery: any) => (
-              <Tr key={columnQuery.columnId}>
-                <Td>{columnQuery.columnId}</Td>
-                <Td>{columnQuery.columnTypeName}</Td>
+            {commonColumns.commonColumnQueries?.map((columnQuery: any) => (
+              <Tr key={columnQuery.cid}>
+                <Td>{columnQuery.cid}</Td>
+                <Td>{columnQuery.columnType}</Td>
                 <Td>{columnQuery.columnName}</Td>
                 <Td>{columnQuery.tableName}</Td>
                 <Td>{columnQuery.schemaName}</Td>
@@ -62,4 +42,4 @@ function CommonColumnQueries() {
   );
 }
 
-export default CommonColumnQueries;
+export default CommonColumns;

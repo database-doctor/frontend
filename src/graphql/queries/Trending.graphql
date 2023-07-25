@@ -1,0 +1,39 @@
+query CommonSqlQueries($pid: Int!) {
+  commonSqlQueries(pid: $pid) {
+    jid
+    statement
+    type
+    project {
+      name
+    }
+    finishedAt
+    issuedAt
+    error
+  }
+}
+
+query CommonColumnQueries($pid: Int!) {
+  commonColumnQueries(pid: $pid) {
+    columnName
+    columnType
+    schemaName
+    tableName
+  }
+}
+
+query CommonTableQueries($pid: Int!) {
+  commonTableQueries(pid: $pid) {
+    tid
+    tableName
+    schemaName
+  }
+}
+
+query CommonUserQueries($pid: Int!) {
+  commonUserQueries(uid: $pid) {
+    uid
+    username
+    name
+    email
+  }
+}

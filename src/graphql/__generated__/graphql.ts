@@ -18,6 +18,12 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type AddUserToProjectInput = {
+  email: Scalars['String']['input'];
+  pid: Scalars['Int']['input'];
+  roles: Array<Scalars['Int']['input']>;
+};
+
 export type AlertHistoryListRelationFilter = {
   every?: InputMaybe<AlertHistoryWhereInput>;
   none?: InputMaybe<AlertHistoryWhereInput>;
@@ -124,6 +130,7 @@ export type Column = {
   _count?: Maybe<ColumnCount>;
   cid: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  table: Table;
   tid: Scalars['Int']['output'];
   type: ColumnType;
 };
@@ -161,6 +168,7 @@ export enum ColumnType {
   Real = 'REAL',
   Serial = 'SERIAL',
   Smallint = 'SMALLINT',
+  String = 'STRING',
   Text = 'TEXT',
   Time = 'TIME',
   Timestamp = 'TIMESTAMP',
@@ -179,30 +187,35 @@ export type ColumnWhereInput = {
   type?: InputMaybe<EnumColumnTypeFilter>;
 };
 
-export type CreateColumnInput = {
-  name: Scalars['String']['input'];
-  tid: Scalars['Int']['input'];
-  type: Scalars['String']['input'];
-};
-
 export type CreateProjectInput = {
   dbUrl: Scalars['String']['input'];
   name: Scalars['String']['input'];
 };
 
+export type CreateRoleInput = {
+  name: Scalars['String']['input'];
+  permissions: Array<Scalars['Int']['input']>;
+  pid: Scalars['Float']['input'];
+};
+
+export type CreateSchemaColumnInput = {
+  name: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+};
+
 export type CreateSchemaInput = {
   name: Scalars['String']['input'];
   pid: Scalars['Int']['input'];
+  tables: Array<CreateSchemaTableInput>;
 };
 
-export type CreateTableInput = {
+export type CreateSchemaTableInput = {
+  columns: Array<CreateSchemaColumnInput>;
   name: Scalars['String']['input'];
-  sid: Scalars['Int']['input'];
 };
 
 export type CreateUserProjectTokenInput = {
   pid: Scalars['Int']['input'];
-  token: Scalars['String']['input'];
   uid: Scalars['Int']['input'];
 };
 
@@ -253,6 +266,21 @@ export type IntFilter = {
   notIn?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
+export type Job = {
+  __typename?: 'Job';
+  _count?: Maybe<JobCount>;
+  error?: Maybe<Scalars['String']['output']>;
+  finishedAt?: Maybe<Scalars['DateTime']['output']>;
+  issuedAt: Scalars['DateTime']['output'];
+  issuedById: Scalars['Int']['output'];
+  issuedByUser: User;
+  jid: Scalars['Int']['output'];
+  pid: Scalars['Int']['output'];
+  project: Project;
+  statement: Scalars['String']['output'];
+  type: JobType;
+};
+
 export type JobColumnAccessListRelationFilter = {
   every?: InputMaybe<JobColumnAccessWhereInput>;
   none?: InputMaybe<JobColumnAccessWhereInput>;
@@ -276,6 +304,22 @@ export type JobColumnDetail = {
   columnType: Scalars['String']['output'];
   schemaName: Scalars['String']['output'];
   tableName: Scalars['String']['output'];
+};
+
+export type JobCount = {
+  __typename?: 'JobCount';
+  columns: Scalars['Int']['output'];
+  tables: Scalars['Int']['output'];
+};
+
+
+export type JobCountColumnsArgs = {
+  where?: InputMaybe<JobColumnAccessWhereInput>;
+};
+
+
+export type JobCountTablesArgs = {
+  where?: InputMaybe<JobTableAccessWhereInput>;
 };
 
 export type JobListRelationFilter = {
@@ -350,18 +394,18 @@ export type LoginUserOutput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createColumn: Column;
+  addUserToProject: UserProjectToken;
   createProject: Project;
+  createRole: Role;
   createSchema: Schema;
-  createTable: Table;
   createUserProjectToken: UserProjectToken;
   loginUser: LoginUserOutput;
   registerUser: RegisterUserOutput;
 };
 
 
-export type MutationCreateColumnArgs = {
-  newColumn: CreateColumnInput;
+export type MutationAddUserToProjectArgs = {
+  addUserInput: AddUserToProjectInput;
 };
 
 
@@ -370,13 +414,13 @@ export type MutationCreateProjectArgs = {
 };
 
 
-export type MutationCreateSchemaArgs = {
-  newSchema: CreateSchemaInput;
+export type MutationCreateRoleArgs = {
+  newRole: CreateRoleInput;
 };
 
 
-export type MutationCreateTableArgs = {
-  newTable: CreateTableInput;
+export type MutationCreateSchemaArgs = {
+  newSchema: CreateSchemaInput;
 };
 
 
@@ -474,6 +518,29 @@ export type NestedStringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Permission = {
+  __typename?: 'Permission';
+  _count?: Maybe<PermissionCount>;
+  name: Scalars['String']['output'];
+  pid: Scalars['Int']['output'];
+};
+
+export type PermissionCount = {
+  __typename?: 'PermissionCount';
+  roles: Scalars['Int']['output'];
+};
+
+
+export type PermissionCountRolesArgs = {
+  where?: InputMaybe<RolePermissionMapWhereInput>;
+};
+
+export type PermissionDetail = {
+  __typename?: 'PermissionDetail';
+  name: Scalars['String']['output'];
+  pid: Scalars['Int']['output'];
+};
+
 export type PermissionRelationFilter = {
   is?: InputMaybe<PermissionWhereInput>;
   isNot?: InputMaybe<PermissionWhereInput>;
@@ -533,6 +600,8 @@ export type ProjectDetail = {
   dbUrl: Scalars['String']['output'];
   name: Scalars['String']['output'];
   pid: Scalars['Int']['output'];
+  roles: Array<Role>;
+  users: Array<User>;
 };
 
 export type ProjectListRelationFilter = {
@@ -564,12 +633,20 @@ export type ProjectWhereInput = {
 
 export type Query = {
   __typename?: 'Query';
+  allJobs: Array<Job>;
+  allPermissions: Array<PermissionDetail>;
   allProjects: Array<ProjectDetail>;
+  allRoles: Array<Role>;
   allSchemas: Array<Schema>;
   column: Column;
+  columnTypes: Array<Scalars['String']['output']>;
   commonColumnQueries: Array<JobColumnDetail>;
+  commonSqlQueries: Array<Job>;
   commonTableQueries: Array<JobTableDetail>;
   commonUserQueries?: Maybe<Array<User>>;
+  job: Job;
+  jobsByType: Array<Job>;
+  latestSchema: Schema;
   project?: Maybe<ProjectDetail>;
   schema: Schema;
   table: Table;
@@ -578,6 +655,16 @@ export type Query = {
   userByEmail: User;
   userByUsername: User;
   userProjectToken: UserProjectToken;
+};
+
+
+export type QueryAllJobsArgs = {
+  pid: Scalars['Int']['input'];
+};
+
+
+export type QueryAllRolesArgs = {
+  pid: Scalars['Int']['input'];
 };
 
 
@@ -591,6 +678,11 @@ export type QueryCommonColumnQueriesArgs = {
 };
 
 
+export type QueryCommonSqlQueriesArgs = {
+  pid: Scalars['Int']['input'];
+};
+
+
 export type QueryCommonTableQueriesArgs = {
   pid: Scalars['Int']['input'];
 };
@@ -598,6 +690,23 @@ export type QueryCommonTableQueriesArgs = {
 
 export type QueryCommonUserQueriesArgs = {
   uid: Scalars['Int']['input'];
+};
+
+
+export type QueryJobArgs = {
+  jid: Scalars['Int']['input'];
+  pid: Scalars['Int']['input'];
+};
+
+
+export type QueryJobsByTypeArgs = {
+  pid: Scalars['Int']['input'];
+  type: Scalars['String']['input'];
+};
+
+
+export type QueryLatestSchemaArgs = {
+  pid: Scalars['Int']['input'];
 };
 
 
@@ -653,6 +762,37 @@ export type RegisterUserOutput = {
   token: Scalars['String']['output'];
 };
 
+export type Role = {
+  __typename?: 'Role';
+  _count?: Maybe<RoleCount>;
+  name: Scalars['String']['output'];
+  permissions: Array<Permission>;
+  pid: Scalars['Int']['output'];
+  rid: Scalars['Int']['output'];
+};
+
+export type RoleCount = {
+  __typename?: 'RoleCount';
+  alerts: Scalars['Int']['output'];
+  permissions: Scalars['Int']['output'];
+  users: Scalars['Int']['output'];
+};
+
+
+export type RoleCountAlertsArgs = {
+  where?: InputMaybe<AlertRoleMapWhereInput>;
+};
+
+
+export type RoleCountPermissionsArgs = {
+  where?: InputMaybe<RolePermissionMapWhereInput>;
+};
+
+
+export type RoleCountUsersArgs = {
+  where?: InputMaybe<UserRoleMapWhereInput>;
+};
+
 export type RoleListRelationFilter = {
   every?: InputMaybe<RoleWhereInput>;
   none?: InputMaybe<RoleWhereInput>;
@@ -697,10 +837,12 @@ export type Schema = {
   __typename?: 'Schema';
   _count?: Maybe<SchemaCount>;
   createdAt: Scalars['DateTime']['output'];
+  createdBy: User;
   createdById: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   pid: Scalars['Int']['output'];
   sid: Scalars['Int']['output'];
+  tables: Array<Table>;
 };
 
 export type SchemaCount = {
@@ -778,6 +920,7 @@ export type StringNullableFilter = {
 export type Table = {
   __typename?: 'Table';
   _count?: Maybe<TableCount>;
+  columns: Array<Column>;
   name: Scalars['String']['output'];
   sid: Scalars['Int']['output'];
   tid: Scalars['Int']['output'];
@@ -870,7 +1013,13 @@ export type User = {
   password: Scalars['String']['output'];
   projects: Array<Project>;
   uid: Scalars['Int']['output'];
+  userRoles: Array<Role>;
   username: Scalars['String']['output'];
+};
+
+
+export type UserUserRolesArgs = {
+  pid: Scalars['Int']['input'];
 };
 
 export type UserCount = {
@@ -983,6 +1132,34 @@ export type UserWhereInput = {
   username?: InputMaybe<StringFilter>;
 };
 
+export type CreateProjectMutationVariables = Exact<{
+  newProject: CreateProjectInput;
+}>;
+
+
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', pid: number, createdById: number } };
+
+export type CreateUserProjectTokenMutationVariables = Exact<{
+  newUserProjectToken: CreateUserProjectTokenInput;
+}>;
+
+
+export type CreateUserProjectTokenMutation = { __typename?: 'Mutation', createUserProjectToken: { __typename?: 'UserProjectToken', token: string } };
+
+export type AddUserToProjectMutationVariables = Exact<{
+  addUserInput: AddUserToProjectInput;
+}>;
+
+
+export type AddUserToProjectMutation = { __typename?: 'Mutation', addUserToProject: { __typename?: 'UserProjectToken', token: string } };
+
+export type CreateRoleMutationVariables = Exact<{
+  newRole: CreateRoleInput;
+}>;
+
+
+export type CreateRoleMutation = { __typename?: 'Mutation', createRole: { __typename?: 'Role', name: string, pid: number, rid: number, permissions: Array<{ __typename?: 'Permission', name: string }> } };
+
 export type RegisterUserMutationVariables = Exact<{
   newUser: RegisterUserInput;
 }>;
@@ -1002,13 +1179,71 @@ export type GetUserProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUserProjectsQuery = { __typename?: 'Query', allProjects: Array<{ __typename?: 'ProjectDetail', pid: number, name: string, createdAt: any, createdBy: string, dbUrl: string }> };
 
+export type GetProjectDetailsQueryVariables = Exact<{
+  pid: Scalars['Int']['input'];
+}>;
+
+
+export type GetProjectDetailsQuery = { __typename?: 'Query', project?: { __typename?: 'ProjectDetail', name: string, createdAt: any, pid: number, dbUrl: string, createdBy: string, users: Array<{ __typename?: 'User', createdAt: any, email: string, name: string, uid: number, username: string, userRoles: Array<{ __typename?: 'Role', name: string, rid: number }> }>, roles: Array<{ __typename?: 'Role', name: string, rid: number, permissions: Array<{ __typename?: 'Permission', name: string, pid: number }> }> } | null };
+
+export type GetPermissionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPermissionsQuery = { __typename?: 'Query', allPermissions: Array<{ __typename?: 'PermissionDetail', name: string, pid: number }> };
+
+export type GetProjectRolesQueryVariables = Exact<{
+  pid: Scalars['Int']['input'];
+}>;
+
+
+export type GetProjectRolesQuery = { __typename?: 'Query', allRoles: Array<{ __typename?: 'Role', name: string, rid: number, permissions: Array<{ __typename?: 'Permission', name: string, pid: number }> }> };
+
+export type CommonSqlQueriesQueryVariables = Exact<{
+  pid: Scalars['Int']['input'];
+}>;
+
+
+export type CommonSqlQueriesQuery = { __typename?: 'Query', commonSqlQueries: Array<{ __typename?: 'Job', statement: string, type: JobType, finishedAt?: any | null, issuedAt: any, error?: string | null, project: { __typename?: 'Project', name: string }, issuedByUser: { __typename?: 'User', username: string } }> };
+
+export type CommonColumnQueriesQueryVariables = Exact<{
+  pid: Scalars['Int']['input'];
+}>;
+
+
+export type CommonColumnQueriesQuery = { __typename?: 'Query', commonColumnQueries: Array<{ __typename?: 'JobColumnDetail', columnName: string, columnType: string, schemaName: string, tableName: string }> };
+
+export type CommonTableQueriesQueryVariables = Exact<{
+  pid: Scalars['Int']['input'];
+}>;
+
+
+export type CommonTableQueriesQuery = { __typename?: 'Query', commonTableQueries: Array<{ __typename?: 'JobTableDetail', tid: number, tableName: string, schemaName: string }> };
+
+export type CommonUserQueriesQueryVariables = Exact<{
+  pid: Scalars['Int']['input'];
+}>;
+
+
+export type CommonUserQueriesQuery = { __typename?: 'Query', commonUserQueries?: Array<{ __typename?: 'User', uid: number, username: string, name: string, email: string }> | null };
+
 export type GetUserProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUserProfileQuery = { __typename?: 'Query', user: { __typename?: 'User', name: string, email: string, uid: number, username: string, createdAt: any } };
 
 
+export const CreateProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newProject"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateProjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newProject"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newProject"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pid"}},{"kind":"Field","name":{"kind":"Name","value":"createdById"}}]}}]}}]} as unknown as DocumentNode<CreateProjectMutation, CreateProjectMutationVariables>;
+export const CreateUserProjectTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUserProjectToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUserProjectToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUserProjectTokenInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUserProjectToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newUserProjectToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUserProjectToken"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<CreateUserProjectTokenMutation, CreateUserProjectTokenMutationVariables>;
+export const AddUserToProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddUserToProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addUserInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddUserToProjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addUserToProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"addUserInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addUserInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<AddUserToProjectMutation, AddUserToProjectMutationVariables>;
+export const CreateRoleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRole"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newRole"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRoleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRole"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newRole"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newRole"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<CreateRoleMutation, CreateRoleMutationVariables>;
 export const RegisterUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registerUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newUser"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<RegisterUserMutation, RegisterUserMutationVariables>;
 export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userCreds"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loginUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userCreds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userCreds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
 export const GetUserProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pid"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"dbUrl"}}]}}]}}]} as unknown as DocumentNode<GetUserProjectsQuery, GetUserProjectsQueryVariables>;
+export const GetProjectDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}},{"kind":"Field","name":{"kind":"Name","value":"dbUrl"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"userRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectDetailsQuery, GetProjectDetailsQueryVariables>;
+export const GetPermissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allPermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}}]}}]}}]} as unknown as DocumentNode<GetPermissionsQuery, GetPermissionsQueryVariables>;
+export const GetProjectRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectRolesQuery, GetProjectRolesQueryVariables>;
+export const CommonSqlQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonSqlQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonSqlQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"issuedByUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}},{"kind":"Field","name":{"kind":"Name","value":"finishedAt"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<CommonSqlQueriesQuery, CommonSqlQueriesQueryVariables>;
+export const CommonColumnQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonColumnQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonColumnQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"columnName"}},{"kind":"Field","name":{"kind":"Name","value":"columnType"}},{"kind":"Field","name":{"kind":"Name","value":"schemaName"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}}]}}]}}]} as unknown as DocumentNode<CommonColumnQueriesQuery, CommonColumnQueriesQueryVariables>;
+export const CommonTableQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonTableQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonTableQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tid"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"schemaName"}}]}}]}}]} as unknown as DocumentNode<CommonTableQueriesQuery, CommonTableQueriesQueryVariables>;
+export const CommonUserQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonUserQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonUserQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"uid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CommonUserQueriesQuery, CommonUserQueriesQueryVariables>;
 export const GetUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserProfile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetUserProfileQuery, GetUserProfileQueryVariables>;

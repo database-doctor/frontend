@@ -1,7 +1,5 @@
 "use client";
 import React from "react";
-import { useSearchParams } from "next/navigation";
-
 import {
   Table,
   Thead,
@@ -11,28 +9,9 @@ import {
   TableCaption,
 } from "@chakra-ui/react"
 
-import { gql, useSuspenseQuery } from "@apollo/client";
+import { CommonSqlQueriesQuery } from "@/graphql/__generated__/graphql";
 
-const GET_COMMON_QUERIES = (projectId: number) => gql`
-query GetCommonQueries {
-  commonSqlQueries(projectId: ${projectId}) {
-    queryType
-    queryStatement
-    projectName
-    issuedAt
-    hasError
-    finishedAt
-    errorMessage
-  }
-}
-`;
-
-function CommonSqlQueries() {
-  const params = useSearchParams();
-  const projectId = 1;// Number(params.get('projectId'));
-  const { data } = useSuspenseQuery(GET_COMMON_QUERIES(projectId)) as any;
-  console.log(data);
-
+function CommonJobs({commonJobs} : {commonJobs: CommonSqlQueriesQuery}) {
   return (
     <>
       <Table variant="simple">
@@ -47,11 +26,11 @@ function CommonSqlQueries() {
           </Tr>
         </Thead>
         <Tbody>
-            {data.commonSqlQueries.map((sqlQuery: any) => (
-              <Tr key={sqlQuery.username}>
-                <Td>{sqlQuery.queryType}</Td>
-                <Td>{sqlQuery.queryStatement}</Td>
-                <Td>{sqlQuery.projectName}</Td>
+            {commonJobs.commonSqlQueries.map((sqlQuery: any) => (
+              <Tr key={sqlQuery.jid}>
+                <Td>{sqlQuery.type}</Td>
+                <Td>{sqlQuery.statement}</Td>
+                <Td>{sqlQuery.project.name}</Td>
                 <Td>{sqlQuery.issuedAt}</Td>
                 <Td>{sqlQuery.errorMessage}</Td>
               </Tr>
@@ -63,4 +42,4 @@ function CommonSqlQueries() {
   );
 }
 
-export default CommonSqlQueries;
+export default CommonJobs;

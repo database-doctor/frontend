@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useSearchParams } from "next/navigation";
+import { CommonTableQueriesQuery } from "@/graphql/__generated__/graphql";
 
 import {
   Table,
@@ -11,24 +11,7 @@ import {
   TableCaption,
 } from "@chakra-ui/react"
 
-import { gql, useSuspenseQuery } from "@apollo/client";
-
-const GET_COMMON_TABLES = (projectId: number) => gql`
-query CommonTableQueries {
-  commonTableQueries(projectId: ${projectId}) {
-    tableName
-    tableId
-    schemaName
-  }
-}
-`;
-
-function CommonTableQueries() {
-  const params = useSearchParams();
-  const projectId = 1;// Number(params.get('projectId'));
-  const { data } = useSuspenseQuery(GET_COMMON_TABLES(projectId)) as any;
-  console.log(data);
-
+function CommonTables({commonTables}: {commonTables: CommonTableQueriesQuery}) {
   return (
     <>
       <Table variant="simple">
@@ -41,9 +24,9 @@ function CommonTableQueries() {
           </Tr>
         </Thead>
         <Tbody>
-            {data.commonTableQueries?.map((tableQuery: any) => (
-              <Tr key={tableQuery.tableId}>
-                <Td>{tableQuery.tableId}</Td>
+            {commonTables.commonTableQueries?.map((tableQuery: any) => (
+              <Tr key={tableQuery.tid}>
+                <Td>{tableQuery.tid}</Td>
                 <Td>{tableQuery.tableName}</Td>
                 <Td>{tableQuery.schemaName}</Td>
               </Tr>
@@ -55,4 +38,4 @@ function CommonTableQueries() {
   );
 }
 
-export default CommonTableQueries;
+export default CommonTables;

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useSearchParams } from "next/navigation";
+import { CommonUserQueriesQuery } from "@/graphql/__generated__/graphql";
 
 import {
   Table,
@@ -11,26 +11,7 @@ import {
   TableCaption,
 } from "@chakra-ui/react"
 
-import { gql, useSuspenseQuery } from "@apollo/client";
-
-const GET_COMMON_USERS = (projectId: number) => gql`
-query CommonUserQuery {
-  commonUserQueries(id: ${projectId}) {
-    username
-    userId
-    name
-    email
-    createdAt
-  }
-}
-`;
-
-function CommonUserQueries() {
-  const params = useSearchParams();
-  const projectId = 1;// Number(params.get('projectId'));
-  const { data } = useSuspenseQuery(GET_COMMON_USERS(projectId)) as any;
-  console.log(data);
-
+function CommonUsers({commonUsers}: {commonUsers: CommonUserQueriesQuery}) {
   return (
     <>
       <Table variant="simple">
@@ -44,9 +25,9 @@ function CommonUserQueries() {
           </Tr>
         </Thead>
         <Tbody>
-            {data.commonUserQueries?.map((userQuery: any) => (
-              <Tr key={userQuery.userId}>
-                <Td>{userQuery.userId}</Td>
+            {commonUsers.commonUserQueries?.map((userQuery: any) => (
+              <Tr key={userQuery.uid}>
+                <Td>{userQuery.uid}</Td>
                 <Td>{userQuery.username}</Td>
                 <Td>{userQuery.name}</Td>
                 <Td>{userQuery.email}</Td>
@@ -59,4 +40,4 @@ function CommonUserQueries() {
   );
 }
 
-export default CommonUserQueries;
+export default CommonUsers;
