@@ -12,3 +12,9 @@ mutation CreateUserProjectToken(
     token
   }
 }
+
+mutation AddUserToProject($addUserInput: AddUserToProjectInput!) {
+  addUserToProject(addUserInput: $addUserInput) {
+    token
+  }
+}
