@@ -21,6 +21,10 @@ query GetProjectDetails($pid: Int!) {
       name
       uid
       username
+      userRoles(pid: $pid) {
+        name
+        rid
+      }
     }
     roles {
       name
