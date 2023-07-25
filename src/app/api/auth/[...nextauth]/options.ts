@@ -84,7 +84,6 @@ export const options: NextAuthOptions = {
 
         return true;
       } else if (account?.provider === "credentials") {
-        // Todo : potentially fetch userId & other information from our DB and inject profile information
         return true;
       }
 
