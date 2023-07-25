@@ -88,6 +88,7 @@ function Users({
           </Button>
         </Flex>
       </Flex>
+      <br />
       <TableContainer>
         <Table variant="simple">
           <Thead>

@@ -59,6 +59,7 @@ function Permissions({
           </InputGroup>
         </div>
       </Flex>
+      <br />
       <TableContainer>
         <Table variant="simple">
           <Thead>
