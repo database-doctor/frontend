@@ -1,3 +1,4 @@
+import { AuthenticateOAuthMutation } from "@/graphql/__generated__/graphql";
 import type { NextAuthOptions } from "next-auth";
 
 import GitHubProvider from "next-auth/providers/github";
@@ -9,6 +10,8 @@ import { getClient } from "@/lib/client";
 import { gql } from "@apollo/client";
 import { LoginUser } from "@/graphql/mutations/User.graphql";
 import { LoginUserInput } from "@/graphql/__generated__/graphql";
+
+import { AuthenticateOAuth } from "@/graphql/mutations/RBAC.graphql";
 
 export const options: NextAuthOptions = {
   providers: [
@@ -65,83 +68,22 @@ export const options: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       if (account?.provider === "github") {
-        // Check if user exists
-        const query = gql`
-          query GetUserByEmail {
-            userByEmail(email: "${user.email}") {
-              name,
-              email,
-              userId,
-              username,
-              createdAt,
-            }
-          }
-        `;
+        const oauth_user = {
+          name: user.name,
+          email: user.email,
+          username: user.email,
+          password: "",
+        };
 
-        let db_data;
+        const { data } = await getClient().mutate({
+          mutation: AuthenticateOAuth,
+          variables: { user: oauth_user },
+        });
 
-        try {
-          const { data } = await getClient().query({ query });
-          db_data = data;
-        } catch (e) {
-          console.log("ERROR");
-          db_data = null;
-        }
-        console.log("DB DATA -----");
-        console.log(db_data);
-
-        if (db_data) {
-          // ? User exists - inject userId & other profile information to session
-          user.email = db_data.userByEmail.email;
-          user.name = db_data.userByEmail.name;
-          user.userId = db_data.userByEmail.userId;
-          user.username = db_data.userByEmail.username;
-          user.createdAt = db_data.userByEmail.createdAt;
-        } else {
-          // ? User does not exist - Create the user in our DB, then inject profile information into session
-          const CREATE_USER_MUTATION = gql`
-            mutation CreateUser($newUser: CreateUserInput!) {
-              createUser(newUser: $newUser) {
-                email
-                name
-                userId
-                username
-                createdAt
-              }
-            }
-          `;
-
-          const newUser = {
-            username: user.email,
-            email: user.email,
-            name: user.name || "No Name Found",
-            passwordHash: "no-password",
-            passwordSalt: "no-password",
-          };
-
-          console.log("New User:::");
-          console.log(newUser);
-
-          const response = await getClient().mutate({
-            mutation: CREATE_USER_MUTATION,
-            variables: { newUser },
-          });
-
-          console.log("POST SUCCESSFUL");
-
-          console.log(response);
-
-          // response.data: { createUser : { email, name, userId, username, createdAt }}
-          user.email = response.data.createUser.email;
-          user.name = response.data.createUser.name;
-          user.userId = response.data.createUser.userId;
-          user.username = response.data.createUser.username;
-          user.createdAt = response.data.createUser.createdAt;
-        }
+        user.token = data.authenticateOAuthUser.token;
 
         return true;
       } else if (account?.provider === "credentials") {
-        // Todo : potentially fetch userId & other information from our DB and inject profile information
         return true;
       }
 
