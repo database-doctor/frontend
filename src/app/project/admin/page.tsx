@@ -16,7 +16,7 @@ async function ProjectAdminPage({
   console.log("Project id is: ", searchParams?.projectId);
   const authContext = await getAuthContext();
 
-  const res = await getClient().query({
+  const projectDetails = await getClient().query({
     query: GetProjectDetails,
     variables: {
       pid: Number(searchParams?.projectId) || -1,
@@ -31,9 +31,14 @@ async function ProjectAdminPage({
 
   return (
     <>
-      <PageTitle title={"Admin Portal: " + (res.data.project.name || "")} />
+      <PageTitle
+        title={"Admin Portal: " + (projectDetails.data.project.name || "")}
+      />
       <br />
-      <Admin projectDetails={res.data} permissions={permissions.data} />
+      <Admin
+        projectDetails={projectDetails.data}
+        permissions={permissions.data}
+      />
     </>
   );
 }
