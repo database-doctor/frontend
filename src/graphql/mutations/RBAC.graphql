@@ -8,3 +8,9 @@ mutation CreateRole($newRole: CreateRoleInput!) {
     }
   }
 }
+
+mutation AuthenticateOAuth($user: RegisterUserInput!) {
+  authenticateOAuthUser(user: $user) {
+    token
+  }
+}
