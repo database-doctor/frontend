@@ -49,7 +49,7 @@ import Select from "react-select";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 function Roles({
@@ -163,11 +163,11 @@ function Roles({
                               </Button>
                               <Button>
                                 <Icon
-                                  as={PersonRemoveIcon}
+                                  as={DeleteIcon}
                                   cursor={"pointer"}
                                   marginRight={2}
                                 />
-                                Remove Role
+                                Delete Role
                               </Button>
                             </Stack>
                           </PopoverBody>
