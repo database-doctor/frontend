@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Table,
@@ -28,7 +28,23 @@ import {
   PopoverCloseButton,
   PopoverAnchor,
   Stack,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalCloseButton,
+  ModalContent,
+  FormControl,
+  ModalBody,
+  ModalFooter,
+  useCheckbox,
+  CheckboxGroup,
+  Checkbox,
+  useCheckboxGroup,
+  Text,
 } from "@chakra-ui/react";
+
+import Select from "react-select";
 
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
@@ -38,6 +54,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 function Roles({
   roles,
+  permissions,
 }: {
   roles: Array<{
     __typename?: "Role";
@@ -49,7 +66,27 @@ function Roles({
       pid: number;
     }>;
   }>;
+  permissions: {
+    __typename?: "PermissionDetail" | undefined;
+    name: string;
+    pid: number;
+  }[];
 }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [roleName, setRoleName] = useState("");
+  const [rolePermissions, setRolePermissions] =
+    useState<{ label: string; value: Number }[]>();
+
+  const opts = permissions.map((p) => {
+    return { value: p.pid, label: p.name };
+  });
+
+  async function onSubmitRole(role: any) {
+    console.log(roleName);
+    console.log(rolePermissions);
+  }
+
   return (
     <>
       <Flex justifyContent={"space-between"}>
@@ -72,6 +109,7 @@ function Roles({
           outline={"2px solid"}
           outlineColor={"pink.400"}
           marginRight={6}
+          onClick={onOpen}
         >
           <Icon as={AddIcon} marginRight={2} />
           Create New Role
@@ -116,7 +154,7 @@ function Roles({
                                 cursor={"pointer"}
                                 marginRight={2}
                               />
-                              Edit User
+                              Edit Role
                             </Button>
                             <Button>
                               <Icon
@@ -124,7 +162,7 @@ function Roles({
                                 cursor={"pointer"}
                                 marginRight={2}
                               />
-                              Remove User
+                              Remove Role
                             </Button>
                           </Stack>
                         </PopoverBody>
@@ -137,6 +175,54 @@ function Roles({
           </Tbody>
         </Table>
       </TableContainer>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create/Modify Role</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack spacing={4}>
+              <FormControl id="Role Name">
+                <Input
+                  placeholder="Role Name"
+                  bg={"gray.100"}
+                  border={0}
+                  color={"gray.500"}
+                  _placeholder={{
+                    color: "gray.500",
+                  }}
+                  onChange={(e) => setRoleName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="Permissions">
+                <Text fontWeight={700}>Select Permissions:</Text>
+                <Select
+                  defaultValue={[]}
+                  isMulti
+                  name="colors"
+                  // @ts-ignore
+                  options={opts}
+                  styles={{
+                    option: (provided) => ({
+                      ...provided,
+                      color: "black",
+                    }),
+                  }}
+                  // @ts-ignore
+                  onChange={(newValue) => setRolePermissions(newValue)}
+                />
+              </FormControl>
+            </Stack>
+          </ModalBody>
+
+          <ModalFooter>
+            {/* onClick={onSubmitNewProject} */}
+            <Button colorScheme="pink" mr={3} onClick={onSubmitRole}>
+              Submit
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

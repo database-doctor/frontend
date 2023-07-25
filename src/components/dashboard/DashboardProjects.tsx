@@ -155,7 +155,6 @@ function DashboardProjects({ data }: { data: GetUserProjectsQuery }) {
           </ModalBody>
 
           <ModalFooter>
-            {/* onClick={onSubmitNewProject} */}
             <Button colorScheme="pink" mr={3} onClick={onSubmitNewProject}>
               Submit
             </Button>
