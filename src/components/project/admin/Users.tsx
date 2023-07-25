@@ -48,6 +48,11 @@ function Users({
     name: string;
     uid: number;
     username: string;
+    userRoles: {
+      __typename?: "Role" | undefined;
+      name: string;
+      rid: number;
+    }[];
   }[];
 }) {
   console.log(users);
@@ -108,7 +113,9 @@ function Users({
                 <Td>{user.email || ""}</Td>
                 <Td>
                   <HStack spacing={4}>
-                    <Tag>TODO</Tag>
+                    {user.userRoles.map((role) => (
+                      <Tag key={role.rid}>{role.name}</Tag>
+                    ))}
                   </HStack>
                 </Td>
                 <Td>
