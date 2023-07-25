@@ -7,3 +7,28 @@ query GetUserProjects {
     dbUrl
   }
 }
+
+query GetProjectDetails($pid: Int!) {
+  project(pid: $pid) {
+    name
+    createdAt
+    pid
+    dbUrl
+    createdBy
+    users {
+      createdAt
+      email
+      name
+      uid
+      username
+    }
+    roles {
+      name
+      rid
+      permissions {
+        name
+        pid
+      }
+    }
+  }
+}
