@@ -28,6 +28,8 @@ import {
   PopoverCloseButton,
   PopoverAnchor,
   Stack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -111,11 +113,13 @@ function Users({
                 <Td>{user.username || ""}</Td>
                 <Td>{user.email || ""}</Td>
                 <Td>
-                  <HStack spacing={4}>
+                  <Wrap spacing="10px">
                     {user.userRoles.map((role) => (
-                      <Tag key={role.rid}>{role.name}</Tag>
+                      <WrapItem key={role.rid}>
+                        <Tag>{role.name}</Tag>
+                      </WrapItem>
                     ))}
-                  </HStack>
+                  </Wrap>
                 </Td>
                 <Td>
                   <Flex justifyContent={"right"}>

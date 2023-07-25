@@ -34,6 +34,8 @@ import {
   ModalBody,
   ModalFooter,
   Text,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 
 import Select from "react-select";
@@ -162,11 +164,13 @@ function Roles({
                   <Td>{role.name || ""}</Td>
                   <Td>no descrption</Td>
                   <Td>
-                    <HStack spacing={4}>
+                    <Wrap spacing={"10px"}>
                       {role.permissions.map((permission) => (
-                        <Tag key={permission.pid}>{permission.name}</Tag>
+                        <WrapItem key={permission.pid}>
+                          <Tag>{permission.name}</Tag>
+                        </WrapItem>
                       ))}
-                    </HStack>
+                    </Wrap>
                   </Td>
                   <Td>
                     <Flex justifyContent={"right"}>
