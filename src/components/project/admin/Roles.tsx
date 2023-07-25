@@ -56,16 +56,18 @@ function Roles({
   roles,
   permissions,
 }: {
-  roles: Array<{
-    __typename?: "Role";
-    name: string;
-    rid: number;
-    permissions: Array<{
-      __typename?: "Permission";
-      name: string;
-      pid: number;
-    }>;
-  }>;
+  roles:
+    | {
+        __typename?: "Role" | undefined;
+        name: string;
+        rid: number;
+        permissions: {
+          __typename?: "Permission" | undefined;
+          name: string;
+          pid: number;
+        }[];
+      }[]
+    | undefined;
   permissions: {
     __typename?: "PermissionDetail" | undefined;
     name: string;
@@ -127,52 +129,56 @@ function Roles({
               <Th justifyContent={"right"}></Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {roles.map((role) => (
-              <Tr key={role.rid}>
-                <Td>{role.rid || ""}</Td>
-                <Td>{role.name || ""}</Td>
-                <Td>no descrption</Td>
-                <Td>
-                  <HStack spacing={4}>
-                    <Tag>TODO</Tag>
-                  </HStack>
-                </Td>
-                <Td>
-                  <Flex justifyContent={"right"}>
-                    <Popover placement={"bottom-end"}>
-                      <PopoverTrigger>
-                        <Icon as={MoreVertIcon} cursor={"pointer"} />
-                      </PopoverTrigger>
-                      <PopoverContent maxWidth={200}>
-                        <PopoverArrow />
-                        <PopoverBody>
-                          <Stack>
-                            <Button>
-                              <Icon
-                                as={EditIcon}
-                                cursor={"pointer"}
-                                marginRight={2}
-                              />
-                              Edit Role
-                            </Button>
-                            <Button>
-                              <Icon
-                                as={PersonRemoveIcon}
-                                cursor={"pointer"}
-                                marginRight={2}
-                              />
-                              Remove Role
-                            </Button>
-                          </Stack>
-                        </PopoverBody>
-                      </PopoverContent>
-                    </Popover>
-                  </Flex>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
+          {roles && (
+            <Tbody>
+              {roles.map((role) => (
+                <Tr key={role.rid}>
+                  <Td>{role.rid || ""}</Td>
+                  <Td>{role.name || ""}</Td>
+                  <Td>no descrption</Td>
+                  <Td>
+                    <HStack spacing={4}>
+                      {role.permissions.map((permission) => (
+                        <Tag key={permission.pid}>{permission.name}</Tag>
+                      ))}
+                    </HStack>
+                  </Td>
+                  <Td>
+                    <Flex justifyContent={"right"}>
+                      <Popover placement={"bottom-end"}>
+                        <PopoverTrigger>
+                          <Icon as={MoreVertIcon} cursor={"pointer"} />
+                        </PopoverTrigger>
+                        <PopoverContent maxWidth={200}>
+                          <PopoverArrow />
+                          <PopoverBody>
+                            <Stack>
+                              <Button>
+                                <Icon
+                                  as={EditIcon}
+                                  cursor={"pointer"}
+                                  marginRight={2}
+                                />
+                                Edit Role
+                              </Button>
+                              <Button>
+                                <Icon
+                                  as={PersonRemoveIcon}
+                                  cursor={"pointer"}
+                                  marginRight={2}
+                                />
+                                Remove Role
+                              </Button>
+                            </Stack>
+                          </PopoverBody>
+                        </PopoverContent>
+                      </Popover>
+                    </Flex>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          )}
         </Table>
       </TableContainer>
       <Modal isOpen={isOpen} onClose={onClose}>

@@ -31,7 +31,10 @@ function Admin({
           <Users users={projectDetails.project?.users || []} />
         </TabPanel>
         <TabPanel>
-          <Roles roles={[]} permissions={permissions.allPermissions} />
+          <Roles
+            roles={projectDetails.project?.roles}
+            permissions={permissions.allPermissions}
+          />
         </TabPanel>
         <TabPanel>
           <Permissions permissions={permissions.allPermissions || []} />
