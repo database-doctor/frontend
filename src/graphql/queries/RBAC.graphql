@@ -1,0 +1,17 @@
+query GetPermissions {
+  allPermissions {
+    name
+    pid
+  }
+}
+
+query GetProjectRoles($pid: Int!) {
+  allRoles(pid: $pid) {
+    name
+    rid
+    permissions {
+      name
+      pid
+    }
+  }
+}

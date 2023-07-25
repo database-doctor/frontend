@@ -4,6 +4,7 @@ import React from "react";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import Users from "@/components/project/admin/Users";
 import Permissions from "@/components/project/admin/Permissions";
+import Roles from "@/components/project/admin/Roles";
 
 import {
   GetProjectDetailsQuery,
@@ -30,7 +31,7 @@ function Admin({
           <Users users={projectDetails.project?.users || []} />
         </TabPanel>
         <TabPanel>
-          <p>roles!</p>
+          <Roles roles={[]} />
         </TabPanel>
         <TabPanel>
           <Permissions permissions={permissions.allPermissions || []} />

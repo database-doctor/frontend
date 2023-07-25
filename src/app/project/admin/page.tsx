@@ -6,7 +6,7 @@ import PageTitle from "@/components/reusable/PageTitle";
 import { getClient } from "@/lib/client";
 import { getAuthContext } from "@/utils/auth";
 import { GetProjectDetails } from "@/graphql/queries/Project.graphql";
-import { GetPermissions } from "@/graphql/queries/Permission.graphql";
+import { GetPermissions } from "@/graphql/queries/RBAC.graphql";
 
 async function ProjectAdminPage({
   searchParams,
