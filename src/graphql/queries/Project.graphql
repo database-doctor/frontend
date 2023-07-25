@@ -22,5 +22,13 @@ query GetProjectDetails($pid: Int!) {
       uid
       username
     }
+    roles {
+      name
+      rid
+      permissions {
+        name
+        pid
+      }
+    }
   }
 }
