@@ -4,7 +4,9 @@ import React from "react";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import Users from "@/components/project/admin/Users";
 
-function Admin() {
+import { GetProjectDetailsQuery } from "@/graphql/__generated__/graphql";
+
+function Admin({ projectDetails }: { projectDetails: GetProjectDetailsQuery }) {
   return (
     <Tabs>
       <TabList>
@@ -15,7 +17,7 @@ function Admin() {
 
       <TabPanels>
         <TabPanel>
-          <Users />
+          <Users users={projectDetails.project?.users || []} />
         </TabPanel>
         <TabPanel>
           <p>roles!</p>

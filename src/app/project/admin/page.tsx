@@ -28,7 +28,7 @@ async function ProjectAdminPage({
     <>
       <PageTitle title={"Admin Portal: " + (res.data.project.name || "")} />
       <br />
-      <Admin />
+      <Admin projectDetails={res.data} />
     </>
   );
 }
