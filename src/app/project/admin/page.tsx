@@ -6,6 +6,7 @@ import PageTitle from "@/components/reusable/PageTitle";
 import { getClient } from "@/lib/client";
 import { getAuthContext } from "@/utils/auth";
 import { GetProjectDetails } from "@/graphql/queries/Project.graphql";
+import { GetPermissions } from "@/graphql/queries/Permission.graphql";
 
 async function ProjectAdminPage({
   searchParams,
@@ -13,22 +14,26 @@ async function ProjectAdminPage({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   console.log("Project id is: ", searchParams?.projectId);
+  const authContext = await getAuthContext();
 
   const res = await getClient().query({
     query: GetProjectDetails,
     variables: {
       pid: Number(searchParams?.projectId) || -1,
     },
-    context: await getAuthContext(),
+    context: authContext,
   });
 
-  console.log(res);
+  const permissions = await getClient().query({
+    query: GetPermissions,
+    context: authContext,
+  });
 
   return (
     <>
       <PageTitle title={"Admin Portal: " + (res.data.project.name || "")} />
       <br />
-      <Admin projectDetails={res.data} />
+      <Admin projectDetails={res.data} permissions={permissions.data} />
     </>
   );
 }

@@ -1,0 +1,6 @@
+query GetPermissions {
+  allPermissions {
+    name
+    pid
+  }
+}
