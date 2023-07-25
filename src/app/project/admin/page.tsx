@@ -1,38 +1,34 @@
-"use client";
 import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
-import Users from "@/components/project/admin/Users";
-
+import Admin from "./Admin";
 import PageTitle from "@/components/reusable/PageTitle";
-function ProjectAdminPage() {
-  const params = useSearchParams();
-  console.log(params.get("projectId"));
+
+import { getClient } from "@/lib/client";
+import { getAuthContext } from "@/utils/auth";
+import { GetProjectDetails } from "@/graphql/queries/Project.graphql";
+
+async function ProjectAdminPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  console.log("Project id is: ", searchParams?.projectId);
+
+  const res = await getClient().query({
+    query: GetProjectDetails,
+    variables: {
+      pid: Number(searchParams?.projectId) || -1,
+    },
+    context: await getAuthContext(),
+  });
+
+  console.log(res);
 
   return (
     <>
-      <PageTitle title={"Admin Portal: Project Name"} />
+      <PageTitle title={"Admin Portal: " + (res.data.project.name || "")} />
       <br />
-      <Tabs>
-        <TabList>
-          <Tab>Users</Tab>
-          <Tab>Roles</Tab>
-          <Tab>Permissions</Tab>
-        </TabList>
-
-        <TabPanels>
-          <TabPanel>
-            <Users />
-          </TabPanel>
-          <TabPanel>
-            <p>roles!</p>
-          </TabPanel>
-          <TabPanel>
-            <p>permissions!</p>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <Admin />
     </>
   );
 }
