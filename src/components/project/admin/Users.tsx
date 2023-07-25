@@ -101,14 +101,13 @@ function Users({
           </Thead>
           <Tbody>
             {users.map((user) => (
-              <Tr>
+              <Tr key={user.uid}>
                 <Td>{user.name || ""}</Td>
                 <Td>{user.username || ""}</Td>
                 <Td>{user.email || ""}</Td>
                 <Td>
                   <HStack spacing={4}>
-                    <Tag>Admin</Tag>
-                    <Tag>Analytics</Tag>
+                    <Tag>TODO</Tag>
                   </HStack>
                 </Td>
                 <Td>
