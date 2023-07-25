@@ -21,12 +21,8 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
   Stack,
   useDisclosure,
   Modal,
@@ -37,20 +33,24 @@ import {
   FormControl,
   ModalBody,
   ModalFooter,
-  useCheckbox,
-  CheckboxGroup,
-  Checkbox,
-  useCheckboxGroup,
   Text,
 } from "@chakra-ui/react";
 
 import Select from "react-select";
+
+import { useSearchParams } from "next/navigation";
 
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+
+import { getBearerFromToken } from "@/utils/clientauth";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@apollo/client";
+
+import { CreateRole } from "@/graphql/mutations/RBAC.graphql";
 
 function Roles({
   roles,
@@ -74,19 +74,44 @@ function Roles({
     pid: number;
   }[];
 }) {
+  const params = useSearchParams();
+  const { data: session, status } = useSession();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [roleName, setRoleName] = useState("");
   const [rolePermissions, setRolePermissions] =
     useState<{ label: string; value: Number }[]>();
 
+  const [createRole] = useMutation(CreateRole, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
+  });
+
   const opts = permissions.map((p) => {
     return { value: p.pid, label: p.name };
   });
 
-  async function onSubmitRole(role: any) {
+  async function onSubmitRole() {
     console.log(roleName);
     console.log(rolePermissions);
+
+    const newRole: { name: string; permissions: Number[]; pid: Number } = {
+      name: roleName,
+      permissions: rolePermissions ? rolePermissions.map((p) => p.value) : [],
+      pid: Number(params.get("projectId")),
+    };
+
+    createRole({
+      variables: {
+        newRole,
+      },
+    }).then(() => {
+      onClose();
+    });
   }
 
   return (
@@ -222,7 +247,6 @@ function Roles({
           </ModalBody>
 
           <ModalFooter>
-            {/* onClick={onSubmitNewProject} */}
             <Button colorScheme="pink" mr={3} onClick={onSubmitRole}>
               Submit
             </Button>
