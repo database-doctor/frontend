@@ -19,7 +19,7 @@ function Admin({
   permissions: GetPermissionsQuery;
 }) {
   return (
-    <Tabs>
+    <Tabs isLazy>
       <TabList>
         <Tab>Users</Tab>
         <Tab>Roles</Tab>
