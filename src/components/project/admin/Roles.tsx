@@ -122,7 +122,7 @@ function Roles({
   });
 
   const opts = permissions.map((p) => {
-    return { value: p.pid, label: p.name };
+    ({ value: p.pid, label: p.name });
   });
 
   const setDefaults = (role: {
