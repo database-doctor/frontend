@@ -52,7 +52,13 @@ import { getBearerFromToken } from "@/utils/clientauth";
 import { useSession } from "next-auth/react";
 import { useMutation } from "@apollo/client";
 
-import { CreateRole, ModifyRole } from "@/graphql/mutations/RBAC.graphql";
+import {
+  CreateRole,
+  ModifyRole,
+  DeleteRole,
+} from "@/graphql/mutations/RBAC.graphql";
+
+import { DeleteRoleMutation } from "@/graphql/__generated__/graphql";
 
 function Roles({
   roles,
@@ -100,6 +106,14 @@ function Roles({
   });
 
   const [modifyRole] = useMutation(ModifyRole, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
+  });
+
+  const [deleteRole] = useMutation(DeleteRole, {
     context: {
       headers: {
         authorization: getBearerFromToken(session?.user?.token || ""),
@@ -166,6 +180,17 @@ function Roles({
         onClose();
       });
     }
+  }
+
+  async function onDeleteRole(rid: Number) {
+    deleteRole({
+      variables: { deleteRoleInput: { rid } },
+    }).then((res) => {
+      const data: DeleteRoleMutation = res.data;
+      alert(
+        `Successfully deleted role ${data.deleteRole.name} with id ${data.deleteRole.rid}. Refresh page to see changes.`
+      );
+    });
   }
 
   return (
@@ -242,7 +267,7 @@ function Roles({
                                 />
                                 Edit Role
                               </Button>
-                              <Button>
+                              <Button onClick={() => onDeleteRole(role.rid)}>
                                 <Icon
                                   as={DeleteIcon}
                                   cursor={"pointer"}
