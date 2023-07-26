@@ -11,6 +11,9 @@ async function TrendingQueriesPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+  if (!searchParams?.projectId) {
+    return <div>Must have project id specified in URL</div>;
+  }
   const commonJobs = await getClient().query({
     query: CommonSqlQueries,
     variables: {

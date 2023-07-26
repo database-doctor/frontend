@@ -10,6 +10,9 @@ async function TrendingTablesPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+  if (!searchParams?.projectId) {
+    return <div>Must have project id specified in URL</div>;
+  }
   const commonTables = await getClient().query({
     query: CommonTableQueries,
     variables: {

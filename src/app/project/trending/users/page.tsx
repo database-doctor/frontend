@@ -11,6 +11,9 @@ async function TrendingUsersPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+  if (!searchParams?.projectId) {
+    return <div>Must have project id specified in URL</div>;
+  }
   const commonUsers = await getClient().query({
     query: CommonUserQueries,
     variables: {

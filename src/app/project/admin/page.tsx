@@ -13,7 +13,10 @@ async function ProjectAdminPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  console.log("Project id is: ", searchParams?.projectId);
+  if (!searchParams?.projectId) {
+    return <div>Must have project id specified in URL</div>;
+  }
+
   const authContext = await getAuthContext();
 
   const projectDetails = await getClient().query({

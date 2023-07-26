@@ -11,6 +11,9 @@ async function TrendingColumnsPage({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+  if (!searchParams?.projectId) {
+    return <div>Must have project id specified in URL</div>;
+  }
   const commonColumns = await getClient().query({
     query: CommonColumnQueries,
     variables: {
