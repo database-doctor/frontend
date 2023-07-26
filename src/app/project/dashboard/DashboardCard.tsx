@@ -19,12 +19,12 @@ function DashboardCard({
   title: string;
   children: React.ReactNode;
   styles: {
-    width: string;
-    marginRight: string | number;
+    width?: string;
+    marginRight?: string | number;
   };
 }) {
   return (
-    <Card width={styles.width || "100%"} marginRight={styles.marginRight || 4}>
+    <Card width={styles.width || "100%"} marginRight={styles.marginRight || 0}>
       <CardHeader>
         <Heading size="md"> {title}</Heading>
       </CardHeader>

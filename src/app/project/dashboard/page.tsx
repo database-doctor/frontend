@@ -11,6 +11,8 @@ import { Dashboard } from "@/graphql/queries/Dashboard.graphql";
 import { getClient } from "@/lib/client";
 import { getAuthContext } from "@/utils/auth";
 
+import DashboardStats from "./DashboardStats";
+
 async function ProjectDashboardPage({
   searchParams,
 }: {
@@ -35,19 +37,17 @@ async function ProjectDashboardPage({
         title={`Dashboard: ${dashboardData.data.project.name || ""}`}
       />
       <br />
-      <div></div>
+      <DashboardStats />
+      <br />
       <Flexed>
         <DashboardCard
           title={"Frequently Queried Columns"}
-          styles={{ width: "50%", marginRight: 5 }}
+          styles={{ width: "49%" }}
         >
           {/* @ts-ignore */}
           <GraphTrendingColumFreq projectId={projectId} />
         </DashboardCard>
-        <DashboardCard
-          title={"Trending Tables"}
-          styles={{ width: "50%", marginRight: 5 }}
-        >
+        <DashboardCard title={"Trending Tables"} styles={{ width: "49%" }}>
           {/* @ts-ignore */}
           <GraphTrendingTableFreq projectId={projectId} />
         </DashboardCard>
