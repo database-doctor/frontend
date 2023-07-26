@@ -8,6 +8,9 @@ import CommonJobs from "@/components/project/trending/CommonSqlQueries";
 import CommonColumns from "@/components/project/trending/CommonColumnQueries";
 import CommonTables from "@/components/project/trending/CommonTableQueries";
 import CommonUsers from "@/components/project/trending/CommonUserQueries";
+import GraphTrendingTableFreq from "@/components/dashboard/GraphTrendingTableFreq";
+import TrendingLineChart from "@/components/project/trending/charts/LineChart";
+import GraphTrendingColumFreq from "@/components/dashboard/GraphTrendingColumnFreq";
 
 async function TrendingPage({
   searchParams,
@@ -30,7 +33,6 @@ async function TrendingPage({
     }, 
     context: await getAuthContext(),
   });
-  console.log(commonColumns);
 
   const commonTables = await getClient().query({
     query: CommonTableQueries,
@@ -39,7 +41,6 @@ async function TrendingPage({
     }, 
     context: await getAuthContext(),
   });
-  console.log(commonTables);
 
   const commonUsers = await getClient().query({
     query: CommonUserQueries,
@@ -48,15 +49,17 @@ async function TrendingPage({
     }, 
     context: await getAuthContext(),
   });
-  console.log(commonUsers);
 
   return (
     <>
       <div>
+        {/* @ts-ignore */}
+        {/* <GraphTrendingColumFreq projectId={Number(searchParams?.projectId)}/> */}
+        <TrendingLineChart/>
         <CommonJobs commonJobs={commonJobs.data} />
         <CommonColumns commonColumns={commonColumns.data} />
         <CommonTables commonTables={commonTables.data} />
-        <CommonUsers commonUsers={commonUsers.data}/>
+        <CommonUsers commonUsers={commonUsers.data} />
         {/* <TableSnapshots /> */}
       </div>
     </>

@@ -135,9 +135,37 @@ export type Column = {
   type: ColumnType;
 };
 
+export type ColumnAccessFreq = {
+  __typename?: 'ColumnAccessFreq';
+  cid: Scalars['Int']['output'];
+  column: Column;
+  frequency: Scalars['Int']['output'];
+};
+
+export type ColumnAccessFreqListRelationFilter = {
+  every?: InputMaybe<ColumnAccessFreqWhereInput>;
+  none?: InputMaybe<ColumnAccessFreqWhereInput>;
+  some?: InputMaybe<ColumnAccessFreqWhereInput>;
+};
+
+export type ColumnAccessFreqWhereInput = {
+  AND?: InputMaybe<Array<ColumnAccessFreqWhereInput>>;
+  NOT?: InputMaybe<Array<ColumnAccessFreqWhereInput>>;
+  OR?: InputMaybe<Array<ColumnAccessFreqWhereInput>>;
+  cid?: InputMaybe<IntFilter>;
+  column?: InputMaybe<ColumnRelationFilter>;
+  frequency?: InputMaybe<IntFilter>;
+};
+
 export type ColumnCount = {
   __typename?: 'ColumnCount';
+  ColumnAccessFreq: Scalars['Int']['output'];
   jobs: Scalars['Int']['output'];
+};
+
+
+export type ColumnCountColumnAccessFreqArgs = {
+  where?: InputMaybe<ColumnAccessFreqWhereInput>;
 };
 
 
@@ -177,6 +205,7 @@ export enum ColumnType {
 
 export type ColumnWhereInput = {
   AND?: InputMaybe<Array<ColumnWhereInput>>;
+  ColumnAccessFreq?: InputMaybe<ColumnAccessFreqListRelationFilter>;
   NOT?: InputMaybe<Array<ColumnWhereInput>>;
   OR?: InputMaybe<Array<ColumnWhereInput>>;
   cid?: InputMaybe<IntFilter>;
@@ -273,10 +302,10 @@ export type Job = {
   finishedAt?: Maybe<Scalars['DateTime']['output']>;
   issuedAt: Scalars['DateTime']['output'];
   issuedById: Scalars['Int']['output'];
-  issuedByUser: User;
+  issuedByUser?: Maybe<User>;
   jid: Scalars['Int']['output'];
   pid: Scalars['Int']['output'];
-  project: Project;
+  project?: Maybe<Project>;
   statement: Scalars['String']['output'];
   type: JobType;
 };
@@ -395,6 +424,7 @@ export type LoginUserOutput = {
 export type Mutation = {
   __typename?: 'Mutation';
   addUserToProject: UserProjectToken;
+  authenticateOAuthUser: RegisterUserOutput;
   createProject: Project;
   createRole: Role;
   createSchema: Schema;
@@ -406,6 +436,11 @@ export type Mutation = {
 
 export type MutationAddUserToProjectArgs = {
   addUserInput: AddUserToProjectInput;
+};
+
+
+export type MutationAuthenticateOAuthUserArgs = {
+  user: RegisterUserInput;
 };
 
 
@@ -639,6 +674,7 @@ export type Query = {
   allRoles: Array<Role>;
   allSchemas: Array<Schema>;
   column: Column;
+  columnFrequency: Array<ColumnAccessFreq>;
   columnTypes: Array<Scalars['String']['output']>;
   commonColumnQueries: Array<JobColumnDetail>;
   commonSqlQueries: Array<Job>;
@@ -650,6 +686,7 @@ export type Query = {
   project?: Maybe<ProjectDetail>;
   schema: Schema;
   table: Table;
+  tableFrequency: Array<TableAccessFreq>;
   tableSnapshots: Array<TableSnapshotOutput>;
   user: User;
   userByEmail: User;
@@ -926,11 +963,39 @@ export type Table = {
   tid: Scalars['Int']['output'];
 };
 
+export type TableAccessFreq = {
+  __typename?: 'TableAccessFreq';
+  frequency: Scalars['Int']['output'];
+  table: Table;
+  tid: Scalars['Int']['output'];
+};
+
+export type TableAccessFreqListRelationFilter = {
+  every?: InputMaybe<TableAccessFreqWhereInput>;
+  none?: InputMaybe<TableAccessFreqWhereInput>;
+  some?: InputMaybe<TableAccessFreqWhereInput>;
+};
+
+export type TableAccessFreqWhereInput = {
+  AND?: InputMaybe<Array<TableAccessFreqWhereInput>>;
+  NOT?: InputMaybe<Array<TableAccessFreqWhereInput>>;
+  OR?: InputMaybe<Array<TableAccessFreqWhereInput>>;
+  frequency?: InputMaybe<IntFilter>;
+  table?: InputMaybe<TableRelationFilter>;
+  tid?: InputMaybe<IntFilter>;
+};
+
 export type TableCount = {
   __typename?: 'TableCount';
+  TableAccessFreq: Scalars['Int']['output'];
   columns: Scalars['Int']['output'];
   jobs: Scalars['Int']['output'];
   snapshots: Scalars['Int']['output'];
+};
+
+
+export type TableCountTableAccessFreqArgs = {
+  where?: InputMaybe<TableAccessFreqWhereInput>;
 };
 
 
@@ -995,6 +1060,7 @@ export type TableWhereInput = {
   AND?: InputMaybe<Array<TableWhereInput>>;
   NOT?: InputMaybe<Array<TableWhereInput>>;
   OR?: InputMaybe<Array<TableWhereInput>>;
+  TableAccessFreq?: InputMaybe<TableAccessFreqListRelationFilter>;
   columns?: InputMaybe<ColumnListRelationFilter>;
   jobs?: InputMaybe<JobTableAccessListRelationFilter>;
   name?: InputMaybe<StringFilter>;
@@ -1160,6 +1226,13 @@ export type CreateRoleMutationVariables = Exact<{
 
 export type CreateRoleMutation = { __typename?: 'Mutation', createRole: { __typename?: 'Role', name: string, pid: number, rid: number, permissions: Array<{ __typename?: 'Permission', name: string }> } };
 
+export type AuthenticateOAuthMutationVariables = Exact<{
+  user: RegisterUserInput;
+}>;
+
+
+export type AuthenticateOAuthMutation = { __typename?: 'Mutation', authenticateOAuthUser: { __typename?: 'RegisterUserOutput', token: string } };
+
 export type RegisterUserMutationVariables = Exact<{
   newUser: RegisterUserInput;
 }>;
@@ -1203,7 +1276,7 @@ export type CommonSqlQueriesQueryVariables = Exact<{
 }>;
 
 
-export type CommonSqlQueriesQuery = { __typename?: 'Query', commonSqlQueries: Array<{ __typename?: 'Job', statement: string, type: JobType, finishedAt?: any | null, issuedAt: any, error?: string | null, project: { __typename?: 'Project', name: string }, issuedByUser: { __typename?: 'User', username: string } }> };
+export type CommonSqlQueriesQuery = { __typename?: 'Query', commonSqlQueries: Array<{ __typename?: 'Job', jid: number, statement: string, type: JobType, finishedAt?: any | null, issuedAt: any, error?: string | null, project?: { __typename?: 'Project', name: string } | null }> };
 
 export type CommonColumnQueriesQueryVariables = Exact<{
   pid: Scalars['Int']['input'];
@@ -1226,6 +1299,16 @@ export type CommonUserQueriesQueryVariables = Exact<{
 
 export type CommonUserQueriesQuery = { __typename?: 'Query', commonUserQueries?: Array<{ __typename?: 'User', uid: number, username: string, name: string, email: string }> | null };
 
+export type TableFrequencyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TableFrequencyQuery = { __typename?: 'Query', tableFrequency: Array<{ __typename?: 'TableAccessFreq', frequency: number, table: { __typename?: 'Table', name: string } }> };
+
+export type ColumnFrequencyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ColumnFrequencyQuery = { __typename?: 'Query', columnFrequency: Array<{ __typename?: 'ColumnAccessFreq', cid: number, frequency: number, column: { __typename?: 'Column', name: string, table: { __typename?: 'Table', name: string } } }> };
+
 export type GetUserProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1236,14 +1319,17 @@ export const CreateProjectDocument = {"kind":"Document","definitions":[{"kind":"
 export const CreateUserProjectTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUserProjectToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUserProjectToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUserProjectTokenInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUserProjectToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newUserProjectToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUserProjectToken"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<CreateUserProjectTokenMutation, CreateUserProjectTokenMutationVariables>;
 export const AddUserToProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddUserToProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addUserInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddUserToProjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addUserToProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"addUserInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addUserInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<AddUserToProjectMutation, AddUserToProjectMutationVariables>;
 export const CreateRoleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRole"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newRole"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRoleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRole"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newRole"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newRole"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<CreateRoleMutation, CreateRoleMutationVariables>;
+export const AuthenticateOAuthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AuthenticateOAuth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authenticateOAuthUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<AuthenticateOAuthMutation, AuthenticateOAuthMutationVariables>;
 export const RegisterUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registerUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newUser"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newUser"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<RegisterUserMutation, RegisterUserMutationVariables>;
 export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userCreds"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loginUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userCreds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userCreds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
 export const GetUserProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allProjects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pid"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"dbUrl"}}]}}]}}]} as unknown as DocumentNode<GetUserProjectsQuery, GetUserProjectsQueryVariables>;
 export const GetProjectDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}},{"kind":"Field","name":{"kind":"Name","value":"dbUrl"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"userRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectDetailsQuery, GetProjectDetailsQueryVariables>;
 export const GetPermissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allPermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}}]}}]}}]} as unknown as DocumentNode<GetPermissionsQuery, GetPermissionsQueryVariables>;
 export const GetProjectRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rid"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"pid"}}]}}]}}]}}]} as unknown as DocumentNode<GetProjectRolesQuery, GetProjectRolesQueryVariables>;
-export const CommonSqlQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonSqlQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonSqlQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"issuedByUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}},{"kind":"Field","name":{"kind":"Name","value":"finishedAt"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<CommonSqlQueriesQuery, CommonSqlQueriesQueryVariables>;
+export const CommonSqlQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonSqlQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonSqlQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jid"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"finishedAt"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<CommonSqlQueriesQuery, CommonSqlQueriesQueryVariables>;
 export const CommonColumnQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonColumnQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonColumnQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"columnName"}},{"kind":"Field","name":{"kind":"Name","value":"columnType"}},{"kind":"Field","name":{"kind":"Name","value":"schemaName"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}}]}}]}}]} as unknown as DocumentNode<CommonColumnQueriesQuery, CommonColumnQueriesQueryVariables>;
 export const CommonTableQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonTableQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonTableQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tid"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"schemaName"}}]}}]}}]} as unknown as DocumentNode<CommonTableQueriesQuery, CommonTableQueriesQueryVariables>;
 export const CommonUserQueriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommonUserQueries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"commonUserQueries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"uid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CommonUserQueriesQuery, CommonUserQueriesQueryVariables>;
+export const TableFrequencyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TableFrequency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tableFrequency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"table"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"frequency"}}]}}]}}]} as unknown as DocumentNode<TableFrequencyQuery, TableFrequencyQueryVariables>;
+export const ColumnFrequencyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ColumnFrequency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"columnFrequency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cid"}},{"kind":"Field","name":{"kind":"Name","value":"column"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"table"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"frequency"}}]}}]}}]} as unknown as DocumentNode<ColumnFrequencyQuery, ColumnFrequencyQueryVariables>;
 export const GetUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserProfile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetUserProfileQuery, GetUserProfileQueryVariables>;

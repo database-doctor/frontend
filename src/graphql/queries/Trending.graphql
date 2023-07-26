@@ -37,3 +37,26 @@ query CommonUserQueries($pid: Int!) {
     email
   }
 }
+
+query TableFrequency($pid: Int!) {
+  tableFrequency(pid: $pid) {
+    tid
+    table {
+      name
+    }
+    frequency
+  }
+}
+
+query ColumnFrequency($pid: Int!) {
+  columnFrequency(pid: $pid) {
+    cid
+    column {
+      name
+      table {
+        name
+      }
+    }
+    frequency
+  }
+}
