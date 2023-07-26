@@ -1,0 +1,12 @@
+mutation CreateSchema($newSchema: CreateSchemaInput!) {
+  createSchema(newSchema: $newSchema) {
+    name
+    tables {
+      name
+      columns {
+        name
+        type
+      }
+    }
+  }
+}

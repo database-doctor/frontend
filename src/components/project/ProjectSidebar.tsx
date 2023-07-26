@@ -1,22 +1,23 @@
 "use client";
 
-import React from "react";
-import { useSearchParams } from "next/navigation";
 import {
   Box,
   Flex,
-  Icon,
-  useColorModeValue,
   FlexProps,
+  Icon,
   Stack,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import SettingsIcon from "@mui/icons-material/Settings";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import DrawIcon from "@mui/icons-material/Draw";
 import NextLink from "next/link";
+import React from "react";
+import SettingsIcon from "@mui/icons-material/Settings";
+import StorageIcon from "@mui/icons-material/Storage";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { useSearchParams } from "next/navigation";
 
 interface LinkItemProps {
   name: string;
@@ -46,6 +47,7 @@ const LinkItems: Array<LinkItemProps> = [
     icon: TrendingUpIcon,
     link: "/project/trending/queries",
   },
+  { name: "Schema", icon: StorageIcon, link: "/project/schema" },
   { name: "Settings", icon: SettingsIcon, link: "/project/settings" },
   { name: "Admin", icon: AdminPanelSettingsIcon, link: "/project/admin" },
   { name: "Template", icon: DrawIcon, link: "/project/template" },

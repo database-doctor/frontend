@@ -1,10 +1,12 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
-import ProvideChakra from "@/app/config/chakraprovider";
-import Navbar from "@/components/navigation/navbar/Navbar";
-const inter = Inter({ subsets: ["latin"] });
+
 import { ApolloWrapper } from "@/apollo-provider";
+import { Inter } from "next/font/google";
+import Navbar from "@/components/navigation/navbar/Navbar";
+import ProvideChakra from "@/app/config/chakraprovider";
 import { ProvideSession } from "@/lib/sessionprovider";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Database Doctors",

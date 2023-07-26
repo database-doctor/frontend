@@ -1,0 +1,27 @@
+query GetSchema($sid: Int!) {
+  schema(sid: $sid) {
+    name
+    createdAt
+    tables {
+      name
+      columns {
+        name
+        type
+      }
+    }
+  }
+}
+
+query LatestSchema($pid: Int!) {
+  latestSchema(pid: $pid) {
+    name
+    createdAt
+    tables {
+      name
+      columns {
+        name
+        type
+      }
+    }
+  }
+}
