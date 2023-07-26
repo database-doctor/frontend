@@ -8,6 +8,7 @@ import {
   CardBody,
   CardFooter,
   Heading,
+  Center,
 } from "@chakra-ui/react";
 
 function DashboardCard({
@@ -27,7 +28,9 @@ function DashboardCard({
       <CardHeader>
         <Heading size="md"> {title}</Heading>
       </CardHeader>
-      <CardBody>{children}</CardBody>
+      <CardBody>
+        <Center>{children}</Center>
+      </CardBody>
     </Card>
   );
 }
