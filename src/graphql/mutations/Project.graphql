@@ -18,3 +18,14 @@ mutation AddUserToProject($addUserInput: AddUserToProjectInput!) {
     token
   }
 }
+
+mutation RemoveUserFromProject(
+  $removeUserFromProjectInput: RemoveUserFromProjectInput!
+) {
+  removeUserFromProject(
+    removeUserFromProjectInput: $removeUserFromProjectInput
+  ) {
+    pid
+    uid
+  }
+}

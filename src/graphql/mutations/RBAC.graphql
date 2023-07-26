@@ -14,3 +14,22 @@ mutation AuthenticateOAuth($user: RegisterUserInput!) {
     token
   }
 }
+
+mutation ModifyRole($modifiedRole: ModifyRoleInput!) {
+  modifyRole(modifiedRole: $modifiedRole) {
+    name
+    rid
+    pid
+    permissions {
+      name
+      pid
+    }
+  }
+}
+
+mutation DeleteRole($deleteRoleInput: RoleId!) {
+  deleteRole(deleteRoleInput: $deleteRoleInput) {
+    name
+    rid
+  }
+}

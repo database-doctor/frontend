@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Table,
@@ -11,7 +11,6 @@ import {
   Td,
   TableContainer,
   Tag,
-  HStack,
   Input,
   Flex,
   Button,
@@ -30,7 +29,19 @@ import {
   Stack,
   Wrap,
   WrapItem,
+  useDisclosure,
+  Modal,
+  Text,
+  ModalOverlay,
+  ModalHeader,
+  ModalCloseButton,
+  ModalContent,
+  FormControl,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
+
+import Select from "react-select";
 
 import SearchIcon from "@mui/icons-material/Search";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
@@ -39,8 +50,22 @@ import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
+import {
+  AddUserToProject,
+  RemoveUserFromProject,
+} from "@/graphql/mutations/Project.graphql";
+import { getBearerFromToken } from "@/utils/clientauth";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@apollo/client";
+import { useSearchParams } from "next/navigation";
+import {
+  AddUserToProjectInput,
+  RemoveUserFromProjectInput,
+} from "@/graphql/__generated__/graphql";
+
 function Users({
   users,
+  roles,
 }: {
   users: {
     __typename?: "User" | undefined;
@@ -55,8 +80,79 @@ function Users({
       rid: number;
     }[];
   }[];
+  roles: Array<{
+    __typename?: "Role";
+    name: string;
+    rid: number;
+    permissions: Array<{
+      __typename?: "Permission";
+      name: string;
+      pid: number;
+    }>;
+  }>;
 }) {
-  console.log(users);
+  const params = useSearchParams();
+  const { data: session, status } = useSession();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [email, setEmail] = useState("");
+
+  const [addUserToProject] = useMutation(AddUserToProject, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
+  });
+  const [removeUserFromProject] = useMutation(RemoveUserFromProject, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
+  });
+
+  const [userRoles, setUserRoles] =
+    useState<{ label: string; value: number }[]>();
+
+  const opts = roles.map((r) => ({ value: r.rid, label: r.name }));
+
+  async function inviteUserToProject() {
+    const addUserInput: AddUserToProjectInput = {
+      email,
+      pid: Number(params.get("projectId")),
+      roles: userRoles?.map((r) => r.value) || [],
+    };
+
+    addUserToProject({
+      variables: { addUserInput },
+    })
+      .then(() => onClose())
+      .catch((err) => {
+        alert(err);
+        onClose();
+      });
+  }
+
+  async function removeUserProjectAccess(uid: number) {
+    const removeUserFromProjectInput: RemoveUserFromProjectInput = {
+      uid,
+      pid: Number(params.get("projectId")),
+    };
+
+    removeUserFromProject({
+      variables: { removeUserFromProjectInput },
+    })
+      .then((res) => {
+        alert(
+          `Successfully removed user ${res.data.removeUserFromProject.uid} from project ${res.data.removeUserFromProject.pid}`
+        );
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  }
+
   return (
     <>
       <Flex justifyContent={"space-between"}>
@@ -80,6 +176,7 @@ function Users({
             outline={"2px solid"}
             outlineColor={"pink.400"}
             marginRight={6}
+            onClick={() => onOpen()}
           >
             <Icon as={PersonAddIcon} marginRight={2} />
             Add User
@@ -131,15 +228,17 @@ function Users({
                         <PopoverArrow />
                         <PopoverBody>
                           <Stack>
-                            <Button>
+                            {/* <Button>
                               <Icon
                                 as={EditIcon}
                                 cursor={"pointer"}
                                 marginRight={2}
                               />
                               Edit User
-                            </Button>
-                            <Button>
+                            </Button> */}
+                            <Button
+                              onClick={() => removeUserProjectAccess(user.uid)}
+                            >
                               <Icon
                                 as={PersonRemoveIcon}
                                 cursor={"pointer"}
@@ -158,6 +257,52 @@ function Users({
           </Tbody>
         </Table>
       </TableContainer>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Invite User To Project</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack spacing={4}>
+              <FormControl id="Email">
+                <Text fontWeight={700}>User Email:</Text>
+                <Input
+                  placeholder="email-to-invite@test.com"
+                  bg={"gray.100"}
+                  border={0}
+                  color={"gray.500"}
+                  _placeholder={{
+                    color: "gray.500",
+                  }}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="Roles">
+                <Text fontWeight={700}>Select Roles:</Text>
+                <Select
+                  isMulti
+                  name="colors"
+                  // @ts-ignore
+                  options={opts}
+                  styles={{
+                    option: (provided) => ({
+                      ...provided,
+                      color: "black",
+                    }),
+                  }}
+                  // @ts-ignore
+                  onChange={(newValue) => setUserRoles(newValue)}
+                />
+              </FormControl>
+            </Stack>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="pink" mr={3} onClick={inviteUserToProject}>
+              Submit
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

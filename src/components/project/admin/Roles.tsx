@@ -52,7 +52,13 @@ import { getBearerFromToken } from "@/utils/clientauth";
 import { useSession } from "next-auth/react";
 import { useMutation } from "@apollo/client";
 
-import { CreateRole } from "@/graphql/mutations/RBAC.graphql";
+import {
+  CreateRole,
+  ModifyRole,
+  DeleteRole,
+} from "@/graphql/mutations/RBAC.graphql";
+
+import { DeleteRoleMutation } from "@/graphql/__generated__/graphql";
 
 function Roles({
   roles,
@@ -85,6 +91,12 @@ function Roles({
   const [rolePermissions, setRolePermissions] =
     useState<{ label: string; value: Number }[]>();
 
+  const [isModification, setIsModification] = useState(false);
+  const [roleBeingModified, setRoleBeingModified] = useState(-1);
+  const [defaultRoleName, setDefaultRoleName] = useState("");
+  const [defaultRolePermissions, setDefaultRolePermissions] =
+    useState<{ label: string; value: Number }[]>();
+
   const [createRole] = useMutation(CreateRole, {
     context: {
       headers: {
@@ -93,26 +105,91 @@ function Roles({
     },
   });
 
-  const opts = permissions.map((p) => {
-    return { value: p.pid, label: p.name };
+  const [modifyRole] = useMutation(ModifyRole, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
   });
 
-  async function onSubmitRole() {
-    console.log(roleName);
-    console.log(rolePermissions);
-
-    const newRole: { name: string; permissions: Number[]; pid: Number } = {
-      name: roleName,
-      permissions: rolePermissions ? rolePermissions.map((p) => p.value) : [],
-      pid: Number(params.get("projectId")),
-    };
-
-    createRole({
-      variables: {
-        newRole,
+  const [deleteRole] = useMutation(DeleteRole, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
       },
-    }).then(() => {
-      onClose();
+    },
+  });
+
+  const opts = permissions.map((p) => {
+    ({ value: p.pid, label: p.name });
+  });
+
+  const setDefaults = (role: {
+    __typename?: "Role" | undefined;
+    name: string;
+    rid: number;
+    permissions: {
+      __typename?: "Permission" | undefined;
+      name: string;
+      pid: number;
+    }[];
+  }) => {
+    setIsModification(true);
+    setRoleBeingModified(role.rid);
+    setDefaultRoleName(role.name);
+    setDefaultRolePermissions(
+      role.permissions.map((p) => ({ value: p.pid, label: p.name }))
+    );
+    onOpen();
+  };
+
+  async function onSubmitRole() {
+    if (isModification) {
+      console.log(roleName);
+      console.log(rolePermissions);
+
+      const updatedRole: { rid: Number; name: string; permissions: Number[] } =
+        {
+          name: roleName,
+          permissions: rolePermissions
+            ? rolePermissions.map((p) => p.value)
+            : [],
+          rid: roleBeingModified,
+        };
+
+      modifyRole({
+        variables: { modifiedRole: updatedRole },
+      }).then(() => {
+        setIsModification(false);
+        onClose();
+      });
+    } else {
+      console.log(roleName);
+      console.log(rolePermissions);
+
+      const newRole: { name: string; permissions: Number[]; pid: Number } = {
+        name: roleName,
+        permissions: rolePermissions ? rolePermissions.map((p) => p.value) : [],
+        pid: Number(params.get("projectId")),
+      };
+
+      createRole({
+        variables: { newRole },
+      }).then(() => {
+        onClose();
+      });
+    }
+  }
+
+  async function onDeleteRole(rid: Number) {
+    deleteRole({
+      variables: { deleteRoleInput: { rid } },
+    }).then((res) => {
+      const data: DeleteRoleMutation = res.data;
+      alert(
+        `Successfully deleted role ${data.deleteRole.name} with id ${data.deleteRole.rid}. Refresh page to see changes.`
+      );
     });
   }
 
@@ -182,7 +259,7 @@ function Roles({
                           <PopoverArrow />
                           <PopoverBody>
                             <Stack>
-                              <Button>
+                              <Button onClick={() => setDefaults(role)}>
                                 <Icon
                                   as={EditIcon}
                                   cursor={"pointer"}
@@ -190,7 +267,7 @@ function Roles({
                                 />
                                 Edit Role
                               </Button>
-                              <Button>
+                              <Button onClick={() => onDeleteRole(role.rid)}>
                                 <Icon
                                   as={DeleteIcon}
                                   cursor={"pointer"}
@@ -226,13 +303,14 @@ function Roles({
                   _placeholder={{
                     color: "gray.500",
                   }}
+                  defaultValue={defaultRoleName}
                   onChange={(e) => setRoleName(e.target.value)}
                 />
               </FormControl>
               <FormControl id="Permissions">
                 <Text fontWeight={700}>Select Permissions:</Text>
                 <Select
-                  defaultValue={[]}
+                  defaultValue={defaultRolePermissions}
                   isMulti
                   name="colors"
                   // @ts-ignore
