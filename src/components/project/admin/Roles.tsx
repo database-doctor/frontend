@@ -52,7 +52,7 @@ import { getBearerFromToken } from "@/utils/clientauth";
 import { useSession } from "next-auth/react";
 import { useMutation } from "@apollo/client";
 
-import { CreateRole } from "@/graphql/mutations/RBAC.graphql";
+import { CreateRole, ModifyRole } from "@/graphql/mutations/RBAC.graphql";
 
 function Roles({
   roles,
@@ -85,7 +85,21 @@ function Roles({
   const [rolePermissions, setRolePermissions] =
     useState<{ label: string; value: Number }[]>();
 
+  const [isModification, setIsModification] = useState(false);
+  const [roleBeingModified, setRoleBeingModified] = useState(-1);
+  const [defaultRoleName, setDefaultRoleName] = useState("");
+  const [defaultRolePermissions, setDefaultRolePermissions] =
+    useState<{ label: string; value: Number }[]>();
+
   const [createRole] = useMutation(CreateRole, {
+    context: {
+      headers: {
+        authorization: getBearerFromToken(session?.user?.token || ""),
+      },
+    },
+  });
+
+  const [modifyRole] = useMutation(ModifyRole, {
     context: {
       headers: {
         authorization: getBearerFromToken(session?.user?.token || ""),
@@ -97,23 +111,61 @@ function Roles({
     return { value: p.pid, label: p.name };
   });
 
+  const setDefaults = (role: {
+    __typename?: "Role" | undefined;
+    name: string;
+    rid: number;
+    permissions: {
+      __typename?: "Permission" | undefined;
+      name: string;
+      pid: number;
+    }[];
+  }) => {
+    setIsModification(true);
+    setRoleBeingModified(role.rid);
+    setDefaultRoleName(role.name);
+    setDefaultRolePermissions(
+      role.permissions.map((p) => ({ value: p.pid, label: p.name }))
+    );
+    onOpen();
+  };
+
   async function onSubmitRole() {
-    console.log(roleName);
-    console.log(rolePermissions);
+    if (isModification) {
+      console.log(roleName);
+      console.log(rolePermissions);
 
-    const newRole: { name: string; permissions: Number[]; pid: Number } = {
-      name: roleName,
-      permissions: rolePermissions ? rolePermissions.map((p) => p.value) : [],
-      pid: Number(params.get("projectId")),
-    };
+      const updatedRole: { rid: Number; name: string; permissions: Number[] } =
+        {
+          name: roleName,
+          permissions: rolePermissions
+            ? rolePermissions.map((p) => p.value)
+            : [],
+          rid: roleBeingModified,
+        };
 
-    createRole({
-      variables: {
-        newRole,
-      },
-    }).then(() => {
-      onClose();
-    });
+      modifyRole({
+        variables: { modifiedRole: updatedRole },
+      }).then(() => {
+        setIsModification(false);
+        onClose();
+      });
+    } else {
+      console.log(roleName);
+      console.log(rolePermissions);
+
+      const newRole: { name: string; permissions: Number[]; pid: Number } = {
+        name: roleName,
+        permissions: rolePermissions ? rolePermissions.map((p) => p.value) : [],
+        pid: Number(params.get("projectId")),
+      };
+
+      createRole({
+        variables: { newRole },
+      }).then(() => {
+        onClose();
+      });
+    }
   }
 
   return (
@@ -182,7 +234,7 @@ function Roles({
                           <PopoverArrow />
                           <PopoverBody>
                             <Stack>
-                              <Button>
+                              <Button onClick={() => setDefaults(role)}>
                                 <Icon
                                   as={EditIcon}
                                   cursor={"pointer"}
@@ -226,13 +278,14 @@ function Roles({
                   _placeholder={{
                     color: "gray.500",
                   }}
+                  defaultValue={defaultRoleName}
                   onChange={(e) => setRoleName(e.target.value)}
                 />
               </FormControl>
               <FormControl id="Permissions">
                 <Text fontWeight={700}>Select Permissions:</Text>
                 <Select
-                  defaultValue={[]}
+                  defaultValue={defaultRolePermissions}
                   isMulti
                   name="colors"
                   // @ts-ignore
