@@ -25,7 +25,27 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: "Dashboard", icon: DashboardIcon, link: "/project/dashboard" },
-  { name: "Trending", icon: TrendingUpIcon, link: "/project/trending" },
+  // { name: "Trending", icon: TrendingUpIcon, link: "/project/trending" },
+  {
+    name: "Users",
+    icon: TrendingUpIcon,
+    link: "/project/trending/users",
+  },
+  {
+    name: "Tables",
+    icon: TrendingUpIcon,
+    link: "/project/trending/tables",
+  },
+  {
+    name: "Columns",
+    icon: TrendingUpIcon,
+    link: "/project/trending/columns",
+  },
+  {
+    name: "Queries",
+    icon: TrendingUpIcon,
+    link: "/project/trending/queries",
+  },
   { name: "Settings", icon: SettingsIcon, link: "/project/settings" },
   { name: "Admin", icon: AdminPanelSettingsIcon, link: "/project/admin" },
   { name: "Template", icon: DrawIcon, link: "/project/template" },

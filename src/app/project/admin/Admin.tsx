@@ -28,7 +28,10 @@ function Admin({
 
       <TabPanels>
         <TabPanel>
-          <Users users={projectDetails.project?.users || []} />
+          <Users
+            users={projectDetails.project?.users || []}
+            roles={projectDetails.project?.roles || []}
+          />
         </TabPanel>
         <TabPanel>
           <Roles
