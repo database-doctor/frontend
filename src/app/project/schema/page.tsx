@@ -1,41 +1,29 @@
-import ClientComponentExample from "./client-component-example";
-import { GetUserProjects } from "@/graphql/queries/Project.graphql";
+import { GetProjectName } from "@/graphql/queries/Project.graphql";
+import PageTitle from "@/components/reusable/PageTitle";
 import React from "react";
+import { SchemaContent } from "./SchemaContent";
 import { getAuthContext } from "@/utils/auth";
 import { getClient } from "@/lib/client";
 
-async function ServerComponentTemplate({
+const SchemaPage = async ({
   searchParams,
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  console.log("Search params: ", searchParams);
-
-  // * REQUEST THAT DOES NOT REQUIRE AUTHORIZATION HEADER
-  // * (commented out because this specific query requires authorization)
-  // const res = await getClient().query({
-  //   query: GetUserProjects,
-  // });
-
-  // * REQUEST THAT REQUIRES AUTHORIZATION HEADER
-  const res2 = await getClient().query({
-    query: GetUserProjects,
+}) => {
+  const project = await getClient().query({
+    query: GetProjectName,
+    variables: {
+      pid: Number(searchParams?.projectId),
+    },
     context: await getAuthContext(),
   });
 
   return (
     <>
-      <div>ServerComponentTemplate</div>
-      <div>{JSON.stringify(res2)}</div>
-      <div>
-        The project id is: {searchParams?.projectId}. This was retrieved by
-        adding the searchParams prop to the server component. You can use this
-        to make your gql queries.
-      </div>
-      <br />
-      <ClientComponentExample />
+      <PageTitle title={`${project.data.project.name} :: Schemas`} />
+      <SchemaContent />
     </>
   );
-}
+};
 
-export default ServerComponentTemplate;
+export default SchemaPage;

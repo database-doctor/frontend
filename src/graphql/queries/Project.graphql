@@ -36,3 +36,18 @@ query GetProjectDetails($pid: Int!) {
     }
   }
 }
+
+query GetProjectName($pid: Int!) {
+  project(pid: $pid) {
+    name
+  }
+}
+
+query GetSchemas($pid: Int!) {
+  project(pid: $pid) {
+    schemas {
+      sid
+      name
+    }
+  }
+}

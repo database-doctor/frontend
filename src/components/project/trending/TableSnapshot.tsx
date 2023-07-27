@@ -1,10 +1,9 @@
 "use client";
-import React from "react";
-import { useSearchParams } from "next/navigation";
 
-import { Table, Thead, Tbody, Tr, Td, TableCaption } from "@chakra-ui/react";
-
+import { Table, TableCaption, Tbody, Td, Thead, Tr } from "@chakra-ui/react";
 import { gql, useQuery, useSuspenseQuery } from "@apollo/client";
+
+import React from "react";
 
 const TABLE_SNAPSHOTS = gql`
   query ExampleQuery($table: QueryTableSnapshotInput!) {
