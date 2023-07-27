@@ -35,42 +35,40 @@ import {
   WrapItem,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  CreateRole,
-  DeleteRole,
-  ModifyRole,
-} from "@/graphql/mutations/RBAC.graphql";
+import { CreateAlert, DeleteAlert } from "@/graphql/mutations/Alert.graphql";
 import React, { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DeleteRoleMutation } from "@/graphql/__generated__/graphql";
 import EditIcon from "@mui/icons-material/Edit";
+import { LatestSchema } from "@/graphql/queries/Schema.graphql";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import SearchIcon from "@mui/icons-material/Search";
 import Select from "react-select";
 import { getBearerFromToken } from "@/utils/clientauth";
-import { useMutation } from "@apollo/client";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-const Alerts = ({ alerts }: { alerts: any[] }) => {
+export const Alerts = ({
+  alerts,
+  roles,
+  users,
+}: {
+  alerts: any[];
+  roles: any[];
+  users: any[];
+}) => {
   const params = useSearchParams();
-  const { data: session, status } = useSession();
-
+  const { data: session } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [roleName, setRoleName] = useState("");
-  const [rolePermissions, setRolePermissions] =
-    useState<{ label: string; value: Number }[]>();
+  const [condExpr, setCondExpr] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState<any[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
 
-  const [isModification, setIsModification] = useState(false);
-  const [roleBeingModified, setRoleBeingModified] = useState(-1);
-  const [defaultRoleName, setDefaultRoleName] = useState("");
-  const [defaultRolePermissions, setDefaultRolePermissions] =
-    useState<{ label: string; value: Number }[]>();
-
-  const [createRole] = useMutation(CreateRole, {
+  const { loading, data: latestSchema } = useQuery(LatestSchema, {
+    variables: { pid: Number(params.get("projectId")) },
     context: {
       headers: {
         authorization: getBearerFromToken(session?.user?.token || ""),
@@ -78,7 +76,7 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
     },
   });
 
-  const [modifyRole] = useMutation(ModifyRole, {
+  const [createAlert] = useMutation(CreateAlert, {
     context: {
       headers: {
         authorization: getBearerFromToken(session?.user?.token || ""),
@@ -86,7 +84,7 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
     },
   });
 
-  const [deleteRole] = useMutation(DeleteRole, {
+  const [deleteAlert] = useMutation(DeleteAlert, {
     context: {
       headers: {
         authorization: getBearerFromToken(session?.user?.token || ""),
@@ -94,95 +92,39 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
     },
   });
 
-  const opts = permissions.map((p) => {
-    ({ value: p.pid, label: p.name });
-  });
-
-  const setDefaults = (role: {
-    __typename?: "Role" | undefined;
-    name: string;
-    rid: number;
-    permissions: {
-      __typename?: "Permission" | undefined;
-      name: string;
-      pid: number;
-    }[];
-  }) => {
-    setIsModification(true);
-    setRoleBeingModified(role.rid);
-    setDefaultRoleName(role.name);
-    setDefaultRolePermissions(
-      role.permissions.map((p) => ({ value: p.pid, label: p.name }))
-    );
-    onOpen();
+  const onCreateAlert = (sid: number) => {
+    const newAlert = {
+      condExpr,
+      frequency: 1,
+      message: "empty",
+      returnExpr: "empty",
+      roles: selectedRoles.map((role) => role.label),
+      users: selectedUsers.map((user) => user.label),
+      sid,
+    };
+    createAlert({
+      variables: { newAlert },
+    })
+      .catch((err) => alert(err))
+      .finally(() => onClose());
   };
 
-  async function onSubmitRole() {
-    if (isModification) {
-      console.log(roleName);
-      console.log(rolePermissions);
+  const opts = roles.map((role) => {
+    ({ value: role.rid, label: role.name });
+  });
 
-      const updatedRole: { rid: Number; name: string; permissions: Number[] } =
-        {
-          name: roleName,
-          permissions: rolePermissions
-            ? rolePermissions.map((p) => p.value)
-            : [],
-          rid: roleBeingModified,
-        };
+  const onDeleteAlert = (aid: number) => {
+    deleteAlert({
+      variables: { aid },
+    }).catch((err) => alert(err));
+  };
 
-      modifyRole({
-        variables: { modifiedRole: updatedRole },
-      }).then(() => {
-        setIsModification(false);
-        onClose();
-      });
-    } else {
-      console.log(roleName);
-      console.log(rolePermissions);
-
-      const newRole: { name: string; permissions: Number[]; pid: Number } = {
-        name: roleName,
-        permissions: rolePermissions ? rolePermissions.map((p) => p.value) : [],
-        pid: Number(params.get("projectId")),
-      };
-
-      createRole({
-        variables: { newRole },
-      }).then(() => {
-        onClose();
-      });
-    }
-  }
-
-  async function onDeleteRole(rid: Number) {
-    deleteRole({
-      variables: { deleteRoleInput: { rid } },
-    }).then((res) => {
-      const data: DeleteRoleMutation = res.data;
-      alert(
-        `Successfully deleted role ${data.deleteRole.name} with id ${data.deleteRole.rid}. Refresh page to see changes.`
-      );
-    });
-  }
+  if (loading) return <>Loading...</>;
+  if (!latestSchema) return <>No Schema</>;
 
   return (
     <>
       <Flex justifyContent={"space-between"}>
-        <div>
-          <InputGroup borderRadius={"full"}>
-            <InputLeftElement pointerEvents="none">
-              <Icon as={SearchIcon} />
-            </InputLeftElement>
-            <Input
-              type="tel"
-              placeholder="Search..."
-              outline={"1px solid"}
-              outlineColor={"pink.800"}
-              _focus={{ outlineColor: "pink.500", borderColor: "pink.500" }}
-            />
-          </InputGroup>
-        </div>
         <Button
           color={"pink.400"}
           outline={"2px solid"}
@@ -191,7 +133,7 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
           onClick={onOpen}
         >
           <Icon as={AddIcon} marginRight={2} />
-          Create New Role
+          Create New Alert
         </Button>
       </Flex>
       <br />
@@ -199,29 +141,17 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th>Role ID</Th>
-              <Th>Name</Th>
-              <Th>Description</Th>
-              <Th>Permissions</Th>
+              <Th>Alert ID</Th>
+              <Th>Condition</Th>
               <Th justifyContent={"right"}></Th>
             </Tr>
           </Thead>
-          {roles && (
+          {alerts && (
             <Tbody>
-              {roles.map((role) => (
-                <Tr key={role.rid}>
-                  <Td>{role.rid || ""}</Td>
-                  <Td>{role.name || ""}</Td>
-                  <Td>no descrption</Td>
-                  <Td>
-                    <Wrap spacing={"10px"}>
-                      {role.permissions.map((permission) => (
-                        <WrapItem key={permission.pid}>
-                          <Tag>{permission.name}</Tag>
-                        </WrapItem>
-                      ))}
-                    </Wrap>
-                  </Td>
+              {alerts.map((curAlert) => (
+                <Tr key={curAlert.aid}>
+                  <Td>{curAlert.aid || ""}</Td>
+                  <Td>{curAlert.condExpr || ""}</Td>
                   <Td>
                     <Flex justifyContent={"right"}>
                       <Popover placement={"bottom-end"}>
@@ -232,15 +162,9 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
                           <PopoverArrow />
                           <PopoverBody>
                             <Stack>
-                              <Button onClick={() => setDefaults(role)}>
-                                <Icon
-                                  as={EditIcon}
-                                  cursor={"pointer"}
-                                  marginRight={2}
-                                />
-                                Edit Role
-                              </Button>
-                              <Button onClick={() => onDeleteRole(role.rid)}>
+                              <Button
+                                onClick={() => onDeleteAlert(curAlert.aid)}
+                              >
                                 <Icon
                                   as={DeleteIcon}
                                   cursor={"pointer"}
@@ -263,27 +187,27 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create/Modify Role</ModalHeader>
+          <ModalHeader>Create Alert</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Stack spacing={4}>
-              <FormControl id="Role Name">
+              <FormControl id="Condition">
                 <Input
-                  placeholder="Role Name"
+                  placeholder="(> user.count 2)"
                   bg={"gray.100"}
                   border={0}
                   color={"gray.500"}
                   _placeholder={{
                     color: "gray.500",
                   }}
-                  defaultValue={defaultRoleName}
-                  onChange={(e) => setRoleName(e.target.value)}
+                  value={condExpr}
+                  onChange={(e) => setCondExpr(e.target.value)}
                 />
               </FormControl>
-              <FormControl id="Permissions">
-                <Text fontWeight={700}>Select Permissions:</Text>
+              <FormControl id="Roles">
+                <Text fontWeight={700}>Select Roles</Text>
                 <Select
-                  defaultValue={defaultRolePermissions}
+                  defaultValue={selectedRoles}
                   isMulti
                   name="colors"
                   // @ts-ignore
@@ -295,15 +219,40 @@ const Alerts = ({ alerts }: { alerts: any[] }) => {
                     }),
                   }}
                   // @ts-ignore
-                  onChange={(newValue) => setRolePermissions(newValue)}
+                  onChange={(newValue) => setSelectedRoles(newValue)}
+                />
+              </FormControl>
+              <FormControl id="Users">
+                <Text fontWeight={700}>Select Users</Text>
+                <Select
+                  defaultValue={selectedUsers}
+                  isMulti
+                  name="colors"
+                  // @ts-ignore
+                  options={users.map((user) => ({
+                    value: user.email,
+                    label: user.email,
+                  }))}
+                  styles={{
+                    option: (provided) => ({
+                      ...provided,
+                      color: "black",
+                    }),
+                  }}
+                  // @ts-ignore
+                  onChange={(newValue) => setSelectedUsers(newValue)}
                 />
               </FormControl>
             </Stack>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="pink" mr={3} onClick={onSubmitRole}>
-              Submit
+            <Button
+              colorScheme="pink"
+              mr={3}
+              onClick={() => onCreateAlert(latestSchema.latestSchema.sid)}
+            >
+              Create
             </Button>
           </ModalFooter>
         </ModalContent>

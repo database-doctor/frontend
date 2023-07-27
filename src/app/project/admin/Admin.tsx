@@ -1,22 +1,25 @@
 "use client";
-import React from "react";
-
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import Users from "@/components/project/admin/Users";
-import Permissions from "@/components/project/admin/Permissions";
-import Roles from "@/components/project/admin/Roles";
 
 import {
-  GetProjectDetailsQuery,
   GetPermissionsQuery,
+  GetProjectDetailsQuery,
 } from "@/graphql/__generated__/graphql";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+
+import { Alerts } from "@/components/project/admin/Alerts";
+import Permissions from "@/components/project/admin/Permissions";
+import React from "react";
+import Roles from "@/components/project/admin/Roles";
+import Users from "@/components/project/admin/Users";
 
 function Admin({
   projectDetails,
   permissions,
+  alertData,
 }: {
   projectDetails: GetProjectDetailsQuery;
   permissions: GetPermissionsQuery;
+  alertData: any[];
 }) {
   return (
     <Tabs isLazy>
@@ -24,6 +27,7 @@ function Admin({
         <Tab>Users</Tab>
         <Tab>Roles</Tab>
         <Tab>Permissions</Tab>
+        <Tab>Alerts</Tab>
       </TabList>
 
       <TabPanels>
@@ -41,6 +45,13 @@ function Admin({
         </TabPanel>
         <TabPanel>
           <Permissions permissions={permissions.allPermissions || []} />
+        </TabPanel>
+        <TabPanel>
+          <Alerts
+            alerts={alertData}
+            roles={projectDetails.project?.roles || []}
+            users={projectDetails.project?.users || []}
+          />
         </TabPanel>
       </TabPanels>
     </Tabs>
