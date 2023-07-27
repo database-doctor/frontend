@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 
+import { Snapshot } from "@/components/project/trending/Snapshot";
 import { SnapshotControl } from "@/components/project/trending/SnapshotControl";
 
 export const SnapshotContent = ({ tables }: { tables: any }) => {
@@ -20,8 +21,13 @@ export const SnapshotContent = ({ tables }: { tables: any }) => {
         setToDate={setToDate}
         tables={tables}
       />
-      {tables.length > 0 && tables[tableId].tid} {tables.length > 0 && fromDate}{" "}
-      {tables.length > 0 && toDate}
+      {tables.length > 0 && (
+        <Snapshot
+          tableId={tables[tableId].tid}
+          fromDate={fromDate}
+          toDate={toDate}
+        />
+      )}
     </>
   );
 };
