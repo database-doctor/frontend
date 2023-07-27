@@ -38,6 +38,11 @@ const LinkItems: Array<LinkItemProps> = [
     link: "/project/trending/tables",
   },
   {
+    name: "Snapshots",
+    icon: TrendingUpIcon,
+    link: "/project/trending/snapshots",
+  },
+  {
     name: "Columns",
     icon: TrendingUpIcon,
     link: "/project/trending/columns",

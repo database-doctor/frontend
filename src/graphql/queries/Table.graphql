@@ -1,0 +1,17 @@
+query GetTables($pid: Int!) {
+  latestSchema(pid: $pid) {
+    tables {
+      tid
+      name
+    }
+  }
+}
+
+query TableSnapshots($table: TableSnapshotInput!) {
+  tableSnapshots(table: $table) {
+    atTime
+    queryCount
+    rowCount
+    sizeBytes
+  }
+}

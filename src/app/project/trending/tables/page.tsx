@@ -1,9 +1,8 @@
-import React from "react";
-import { getClient } from "@/lib/client";
-import { getAuthContext } from "@/utils/auth";
 import { CommonTableQueries } from "@/graphql/queries/Trending.graphql";
-
 import CommonTables from "@/components/project/trending/CommonTableQueries";
+import React from "react";
+import { getAuthContext } from "@/utils/auth";
+import { getClient } from "@/lib/client";
 
 async function TrendingTablesPage({
   searchParams,
