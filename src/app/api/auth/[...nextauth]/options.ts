@@ -1,17 +1,11 @@
-import { AuthenticateOAuthMutation } from "@/graphql/__generated__/graphql";
-import type { NextAuthOptions } from "next-auth";
-
-import GitHubProvider from "next-auth/providers/github";
+import { AuthenticateOAuth } from "@/graphql/mutations/RBAC.graphql";
 import CredentialsProvider from "next-auth/providers/credentials";
-
+import GitHubProvider from "next-auth/providers/github";
 import { GithubProfile } from "next-auth/providers/github";
-
-import { getClient } from "@/lib/client";
-import { gql } from "@apollo/client";
 import { LoginUser } from "@/graphql/mutations/User.graphql";
 import { LoginUserInput } from "@/graphql/__generated__/graphql";
-
-import { AuthenticateOAuth } from "@/graphql/mutations/RBAC.graphql";
+import type { NextAuthOptions } from "next-auth";
+import { getClient } from "@/lib/client";
 
 export const options: NextAuthOptions = {
   providers: [
@@ -90,7 +84,6 @@ export const options: NextAuthOptions = {
       return true;
     },
     async jwt({ token, user }) {
-      console.log("JWT Callback!");
       if (user) {
         token.usertoken = user.token || "";
       }
@@ -98,7 +91,6 @@ export const options: NextAuthOptions = {
     },
     // For client components
     async session({ session, token }) {
-      console.log("SESSION CALLBACK!");
       if (session?.user) {
         session.user.token = token.usertoken;
       }

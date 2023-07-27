@@ -1,17 +1,13 @@
-import React from "react";
-
-import PageTitle from "@/components/reusable/PageTitle";
-
+import { Dashboard } from "@/graphql/queries/Dashboard.graphql";
 import DashboardCard from "./DashboardCard";
+import DashboardStats from "./DashboardStats";
 import Flexed from "./Flexed";
 import GraphTrendingColumFreq from "@/components/dashboard/GraphTrendingColumnFreq";
 import GraphTrendingTableFreq from "@/components/dashboard/GraphTrendingTableFreq";
-import { Dashboard } from "@/graphql/queries/Dashboard.graphql";
-
-import { getClient } from "@/lib/client";
+import PageTitle from "@/components/reusable/PageTitle";
+import React from "react";
 import { getAuthContext } from "@/utils/auth";
-
-import DashboardStats from "./DashboardStats";
+import { getClient } from "@/lib/client";
 
 async function ProjectDashboardPage({
   searchParams,
