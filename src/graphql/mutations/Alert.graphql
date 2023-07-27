@@ -1,0 +1,13 @@
+mutation ReadAlert($aid: Int!) {
+  markAlertRead(aid: $aid)
+}
+
+mutation DeleteAlert($aid: Int!) {
+  deleteAlert(aid: $aid)
+}
+
+mutation CreateAlert($newAlert: CreateAlertInput!) {
+  createAlert(newAlert: $newAlert) {
+    aid
+  }
+}
