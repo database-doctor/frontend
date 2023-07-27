@@ -53,9 +53,9 @@ const LinkItems: Array<LinkItemProps> = [
     link: "/project/trending/queries",
   },
   { name: "Schema", icon: StorageIcon, link: "/project/schema" },
-  { name: "Settings", icon: SettingsIcon, link: "/project/settings" },
+  // { name: "Settings", icon: SettingsIcon, link: "/project/settings" },
   { name: "Admin", icon: AdminPanelSettingsIcon, link: "/project/admin" },
-  { name: "Template", icon: DrawIcon, link: "/project/template" },
+  // { name: "Template", icon: DrawIcon, link: "/project/template" },
 ];
 
 function ProjectSidebar() {

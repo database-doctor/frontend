@@ -1,0 +1,17 @@
+query GetSchemaAlerts($sid: Int!) {
+  allAlerts(sid: $sid) {
+    aid
+    condExpr
+    frequency
+    message
+    returnExpr
+  }
+}
+
+query GetUserNotifications {
+  getNotifications {
+    issuedAt
+    uid
+    anid
+  }
+}
