@@ -1,38 +1,36 @@
-import React from "react";
-
-import { getClient } from "@/lib/client";
-import { getAuthContext } from "@/utils/auth";
-import { ColumnFrequency } from "@/graphql/queries/Trending.graphql";
 import { ColumnAccessFreq } from "@/graphql/__generated__/graphql";
-
+import { ColumnFrequency } from "@/graphql/queries/Trending.graphql";
+import React from "react";
 import TrendingPieChart from "../project/trending/charts/PieChart";
+import { getAuthContext } from "@/utils/auth";
+import { getClient } from "@/lib/client";
 
-async function GraphTrendingColumFreq({projectId}: {projectId: number}) {
+async function GraphTrendingColumFreq({ projectId }: { projectId: number }) {
   const columns = await getClient().query({
-    query: ColumnFrequency, 
+    query: ColumnFrequency,
     variables: {
-      pid: projectId, 
-    }, 
-    context: await getAuthContext(), 
-  })
+      pid: projectId,
+    },
+    context: await getAuthContext(),
+  });
 
-  console.log(columns);
-
-  const pieLabels: string[] = []
-  const pieData: number[] = []
+  const pieLabels: string[] = [];
+  const pieData: number[] = [];
 
   columns.data.columnFrequency.map((columnAccess: ColumnAccessFreq) => {
-    pieLabels.push(columnAccess.column.name + "::" + columnAccess.column.table.name);
+    pieLabels.push(
+      String(columnAccess.column.table.name + "::" + columnAccess.column.name)
+    );
     pieData.push(columnAccess.frequency);
-  })
+  });
 
   return (
     <>
       <div>
-        <TrendingPieChart pieData={pieData} pieLabels={pieLabels}/>
+        <TrendingPieChart pieData={pieData} pieLabels={pieLabels} />
       </div>
     </>
-  )
+  );
 }
 
 export default GraphTrendingColumFreq;
