@@ -68,7 +68,7 @@ GITHUB_SECRET=eca8123891982379as9d878sa6d79z
 
 ### Run the backend
 
-Run the backend. Then, in a separate terminal, run the frontend by executing:
+Run the backend (see the backend repository for more information on this). Then, in a separate terminal, run the frontend by executing:
 
 ```bash
 npm run dev
