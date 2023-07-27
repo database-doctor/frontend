@@ -39,7 +39,12 @@ export const SchemaContent = () => {
         setSchemaId={setSchemaId}
         schemas={schemas}
       />
-      <Schema schemaId={schemas[schemaId].sid} isLatestSchema={schemaId == 0} />
+      {schemas.length > 0 && (
+        <Schema
+          schemaId={schemas[schemaId].sid}
+          isLatestSchema={schemaId == 0}
+        />
+      )}
     </>
   );
 };

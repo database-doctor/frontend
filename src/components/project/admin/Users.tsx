@@ -1,67 +1,64 @@
 "use client";
 
-import React, { useState } from "react";
-
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Tag,
-  Input,
-  Flex,
-  Button,
-  InputGroup,
-  InputLeftElement,
-  Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
-  Stack,
-  Wrap,
-  WrapItem,
-  useDisclosure,
-  Modal,
-  Text,
-  ModalOverlay,
-  ModalHeader,
-  ModalCloseButton,
-  ModalContent,
-  FormControl,
-  ModalBody,
-  ModalFooter,
-} from "@chakra-ui/react";
-
-import Select from "react-select";
-
-import SearchIcon from "@mui/icons-material/Search";
-import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
-import EditIcon from "@mui/icons-material/Edit";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-
 import {
   AddUserToProject,
   RemoveUserFromProject,
 } from "@/graphql/mutations/Project.graphql";
-import { getBearerFromToken } from "@/utils/clientauth";
-import { useSession } from "next-auth/react";
-import { useMutation } from "@apollo/client";
-import { useSearchParams } from "next/navigation";
 import {
   AddUserToProjectInput,
   RemoveUserFromProjectInput,
 } from "@/graphql/__generated__/graphql";
+import {
+  Button,
+  Flex,
+  FormControl,
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Popover,
+  PopoverAnchor,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
+  Stack,
+  Table,
+  TableContainer,
+  Tag,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  Wrap,
+  WrapItem,
+  useDisclosure,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
+
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import EditIcon from "@mui/icons-material/Edit";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import SearchIcon from "@mui/icons-material/Search";
+import Select from "react-select";
+import { getBearerFromToken } from "@/utils/clientauth";
+import { useMutation } from "@apollo/client";
+import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 function Users({
   users,
