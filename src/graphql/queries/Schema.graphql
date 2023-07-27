@@ -14,6 +14,7 @@ query GetSchema($sid: Int!) {
 
 query LatestSchema($pid: Int!) {
   latestSchema(pid: $pid) {
+    sid
     name
     createdAt
     tables {
