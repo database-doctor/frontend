@@ -6,7 +6,7 @@
 
 ### A database monitoring tool
 
-`database_doctor` is a project created for CS 348 at the University of Waterloo. More details coming soon.
+`database_doctor` is a project created for CS 348 at the University of Waterloo.
 
 ## Running locally for development
 
